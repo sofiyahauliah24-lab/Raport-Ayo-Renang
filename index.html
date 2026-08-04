@@ -3,13 +3,75 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AYO RENANG - Catatan Perkembangan Les Berenang</title>
+  <title>AYO RENANG - Platform Ekosistem Olahraga Renang Indonesia</title>
   <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Styling Tambahan Khusus Background Foto Kolam & Section Informatif */
+    .hero-bg-overlay {
+      background: linear-gradient(180deg, rgba(3, 43, 67, 0.88) 0%, rgba(0, 119, 182, 0.85) 100%),
+                  url('https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?q=80&w=1600&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center;
+      color: white;
+      padding: 60px 20px;
+      border-radius: 0 0 30px 30px;
+      box-shadow: var(--shadow-lg);
+      margin-bottom: 40px;
+    }
+
+    .venue-bg-card {
+      background: linear-gradient(135deg, rgba(3, 43, 67, 0.85) 0%, rgba(0, 119, 182, 0.85) 100%),
+                  url('https://images.unsplash.com/photo-1519315901367-f34ff9154487?q=80&w=1600&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center;
+      color: white;
+      border-radius: 24px;
+      padding: 40px 30px;
+      margin: 40px 0;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .program-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 28px;
+      border: 1px solid rgba(0, 180, 216, 0.2);
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+    }
+
+    .program-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow);
+      border-color: var(--accent-color);
+    }
+
+    .faq-item {
+      background: white;
+      border-radius: 16px;
+      padding: 20px 24px;
+      margin-bottom: 14px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .faq-item h4 {
+      color: var(--primary-color);
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .faq-item p {
+      color: #64748b;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+  </style>
 </head>
 <body>
 
   <!-- HEADER UTAMA BERSIH -->
-  <header>
+  <header style="margin-bottom: 0; border-radius: 0;">
     <div class="container header-content" style="justify-content: center; text-align: center;">
       <div>
         <h1 style="justify-content: center;">AYO <span>RENANG</span></h1>
@@ -18,69 +80,137 @@
     </div>
   </header>
 
-  <div class="container" style="max-width: 920px;">
-    <div class="landing-hero" style="padding-top: 10px;">
-
-      <h1 style="font-size: 2.2rem; font-weight: 800; color: var(--primary-color); line-height: 1.35; margin-bottom: 16px;">
-        Pantau Perkembangan Berenang <span style="color: var(--secondary-color); position: relative; display: inline-block;">Buah Hati Anda</span>
+  <!-- HERO SECTION DENGAN BACKGROUND FOTO KOLAM RENANG UTAMA -->
+  <div class="hero-bg-overlay">
+    <div class="container" style="max-width: 900px; text-align: center;">
+      <h1 style="font-size: 2.4rem; font-weight: 800; line-height: 1.3; margin-bottom: 16px; color: white;">
+        Pantau Perkembangan & Hasil Latihan Berenang Buah Hati Anda
       </h1>
-      <p class="subtitle" style="font-size: 1.05rem; max-width: 760px; margin: 0 auto 35px auto; color: #475569; line-height: 1.7;">
-        Selamat datang Ayah & Bunda. Melalui fitur <strong>History Digital Progress</strong> dari AYO RENANG, Anda dapat memantau riwayat latihan, pencapaian teknik gaya berenang, dan catatan langsung dari pelatih secara transparan tanpa perlu mendaftar akun.
+      <p style="font-size: 1.08rem; max-width: 760px; margin: 0 auto 35px auto; opacity: 0.95; line-height: 1.7;">
+        Melalui fitur <strong>History Digital Progress</strong> dari AYO RENANG, Ayah & Bunda dapat memantau riwayat latihan, penguasaan gaya berenang, dan rekomendasi pelatih secara real-time tanpa perlu mendaftar akun.
       </p>
-      
+
       <!-- PENCARIAN PUSAT UNTUK ORANG TUA / WALI -->
-      <div class="card" style="max-width: 680px; margin: 0 auto 40px auto; padding: 35px 30px; text-align: left; background: rgba(255, 255, 255, 0.95); border: 2px solid rgba(0, 180, 216, 0.3); box-shadow: var(--shadow-lg);">
+      <div class="card" style="max-width: 680px; margin: 0 auto; padding: 35px 30px; text-align: left; background: rgba(255, 255, 255, 0.98); border: 2px solid rgba(0, 180, 216, 0.4); box-shadow: 0 20px 50px rgba(0,0,0,0.3); color: var(--text-dark);">
         <div style="text-align: center; margin-bottom: 22px;">
-          <h2 style="color: var(--primary-color); font-weight: 800; font-size: 1.4rem; margin-bottom: 6px;">
+          <h2 style="color: var(--primary-color); font-weight: 800; font-size: 1.45rem; margin-bottom: 6px;">
             Cari Raport Latihan Anak
           </h2>
           <p style="color: #64748b; font-size: 0.92rem; line-height: 1.5;">
-            Ketikkan nama depan atau nama lengkap anak Anda untuk mencari catatan evaluasi sesi latihan.
+            Ketikkan nama depan atau nama lengkap anak Anda untuk membuka catatan evaluasi sesi latihan.
           </p>
         </div>
 
         <div class="search-box" style="margin-bottom: 15px;">
-          <input type="text" id="parent-search-input" placeholder="Ketik nama anak Anda (contoh: Budi, Rian, Clarissa)..." style="font-size: 1.05rem; padding: 15px 24px; border-radius: 30px; border: 2px solid var(--accent-color); width: 100%; box-shadow: 0 4px 15px rgba(0,180,216,0.12);">
+          <input type="text" id="parent-search-input" placeholder="Ketik nama anak Anda (contoh: Budi, Rian, Clarissa)..." style="font-size: 1.05rem; padding: 15px 24px; border-radius: 30px; border: 2px solid var(--accent-color); width: 100%; box-shadow: 0 4px 15px rgba(0,180,216,0.15);">
         </div>
 
         <div id="search-spinner" class="spinner" style="display: none;"></div>
         <div id="parent-search-results" style="display: flex; flex-direction: column; gap: 12px; margin-top: 15px;"></div>
       </div>
+    </div>
+  </div>
 
-      <!-- HIGHLIGHT INFORMASI PENJELASAN UNTUK ORANG TUA -->
-      <div class="landing-features" style="margin-top: 35px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));">
-        <div class="feature-box" style="padding: 25px; text-align: left; border-top: 4px solid var(--accent-color);">
-          <h3 style="font-size: 1.08rem; color: var(--primary-color); margin-bottom: 8px;">History Digital Progress</h3>
-          <p style="font-size: 0.88rem; color: #64748b; line-height: 1.6;">Laporan berkala hasil evaluasi teknik berenang, keberanian di dalam air, serta rekomendasi latihan dari pelatih yang dapat diakses langsung oleh Wali Murid.</p>
-        </div>
-        <div class="feature-box" style="padding: 25px; text-align: left; border-top: 4px solid var(--secondary-color);">
-          <h3 style="font-size: 1.08rem; color: var(--primary-color); margin-bottom: 8px;">Swimming Course Application</h3>
-          <p style="font-size: 0.88rem; color: #64748b; line-height: 1.6;">Layanan pendaftaran les renang terpadu bagi anak-anak, remaja, hingga dewasa bersama jaringan instruktur & klub renang terpercaya.</p>
-        </div>
-        <div class="feature-box" style="padding: 25px; text-align: left; border-top: 4px solid var(--primary-color);">
-          <h3 style="font-size: 1.08rem; color: var(--primary-color); margin-bottom: 8px;">Event Lomba & Kejurnas</h3>
-          <p style="font-size: 0.88rem; color: #64748b; line-height: 1.6;">Penyelenggara kejuaraan renang pelajar (TK, SD, SMP, SMA) seperti Fun Swimming Competition untuk mengasah mental bertanding atlet muda.</p>
-        </div>
+  <div class="container" style="max-width: 1060px;">
+
+    <!-- SECTION 1: TENTANG AYO RENANG & FITUR HISTORY DIGITAL PROGRESS -->
+    <div style="margin: 50px 0;">
+      <div style="text-align: center; max-width: 750px; margin: 0 auto 40px auto;">
+        <span class="badge" style="background: rgba(0, 180, 216, 0.15); color: var(--secondary-color); font-weight: 700; font-size: 0.85rem; margin-bottom: 10px;">EKOSISTEM DIGITAL RENANG</span>
+        <h2 style="color: var(--primary-color); font-weight: 800; font-size: 1.85rem; margin-bottom: 12px;">Layanan Terpadu untuk Pelatih, Orang Tua, & Atlet</h2>
+        <p style="color: #64748b; font-size: 0.98rem; line-height: 1.7;">
+          AYO RENANG (ayorenang.id) menghubungkan jaringan sekolah renang, pelatih privat bersertifikat, dan orang tua murid di berbagai kota di Indonesia.
+        </p>
       </div>
 
-      <!-- KONTAR KONSULTASI & SOSIAL MEDIA RESMI -->
-      <div class="card" style="margin-top: 40px; padding: 28px 24px; text-align: center; background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(240,249,255,0.95) 100%); border: 1px solid rgba(0, 180, 216, 0.2);">
-        <h3 style="color: var(--primary-color); font-weight: 800; font-size: 1.25rem; margin-bottom: 8px;">Punya Pertanyaan / Pendaftaran Kelas Baru?</h3>
-        <p style="color: #64748b; font-size: 0.92rem; max-width: 600px; margin: 0 auto 20px auto;">
-          Hubungi tim layanan AYO RENANG atau ikuti kegiatan terbaru kami di media sosial resmi.
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px;">
+        <div class="program-card">
+          <h3 style="color: var(--primary-color); font-size: 1.15rem; font-weight: 700; margin-bottom: 10px;">History Digital Progress</h3>
+          <p style="color: #64748b; font-size: 0.9rem; line-height: 1.6;">Laporan evaluasi berkala yang mencatat tanggal latihan, nomor pertemuan, indikator penguasaan gaya (Belum Bisa, Mulai Berkembang, Berkembang, Sangat Baik), serta catatan saran dari pelatih.</p>
+        </div>
+
+        <div class="program-card">
+          <h3 style="color: var(--primary-color); font-size: 1.15rem; font-weight: 700; margin-bottom: 10px;">Swimming Course Application (SCA)</h3>
+          <p style="color: #64748b; font-size: 0.9rem; line-height: 1.6;">Layanan pendaftaran kelas renang privat maupun reguler untuk bayi/toddler, anak-anak, remaja, dewasa, hingga program hydrotherapy kesehatan.</p>
+        </div>
+
+        <div class="program-card">
+          <h3 style="color: var(--primary-color); font-size: 1.15rem; font-weight: 700; margin-bottom: 10px;">Fun Swimming Competition</h3>
+          <p style="color: #64748b; font-size: 0.9rem; line-height: 1.6;">Penyelenggara kejuaraan renang pelajar tingkat TK, SD, SMP, dan SMA untuk mengasah keberanian bertanding, kedisiplinan, dan sportivitas atlet muda.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 2: LOKASI & VENUE FOTO KOLAM RENANG MITRA -->
+    <div class="venue-bg-card">
+      <div style="max-width: 800px; margin: 0 auto; text-align: center;">
+        <span class="badge" style="background: rgba(255,255,255,0.2); color: white; font-weight: 700; font-size: 0.85rem; margin-bottom: 12px;">JARINGAN KOLAM RENANG & VENUE</span>
+        <h2 style="font-size: 2rem; font-weight: 800; margin-bottom: 14px; color: white;">Fasilitas Kolam Renang Standar & Bersih</h2>
+        <p style="font-size: 1rem; opacity: 0.92; line-height: 1.7; margin-bottom: 30px;">
+          Latihan dilaksanakan di kolam renang mitra terpercaya dengan standar kebersihan air berkala, kedalaman yang disesuaikan usia anak, serta perlengkapan keselamatan air yang memadai.
         </p>
 
-        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-          <a href="https://wa.me/6289697755666" target="_blank" class="btn btn-accent" style="text-decoration: none;">
-            WhatsApp: +62 896-9775-5666
-          </a>
-          <a href="https://www.instagram.com/ayorenang.id/" target="_blank" class="btn btn-secondary" style="background: var(--primary-color); border: none; text-decoration: none;">
-            Instagram: @ayorenang.id
-          </a>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; text-align: left;">
+          <div style="background: rgba(255,255,255,0.15); backdrop-filter: blur(8px); padding: 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.25);">
+            <h4 style="color: var(--accent-color); font-weight: 700; font-size: 1.05rem; margin-bottom: 6px;">Area Yogyakarta & Jawa Tengah</h4>
+            <p style="font-size: 0.85rem; opacity: 0.9;">Mitra kolam renang terjangkau di Sleman, Kota Jogja, Bantul, dan sekitarnya.</p>
+          </div>
+
+          <div style="background: rgba(255,255,255,0.15); backdrop-filter: blur(8px); padding: 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.25);">
+            <h4 style="color: var(--accent-color); font-weight: 700; font-size: 1.05rem; margin-bottom: 6px;">Area Jakarta & Jabodetabek</h4>
+            <p style="font-size: 0.85rem; opacity: 0.9;">Mitra kolam renang privat & publik di Jakarta Selatan, Barat, Timur, Depok, dan Bekasi.</p>
+          </div>
+
+          <div style="background: rgba(255,255,255,0.15); backdrop-filter: blur(8px); padding: 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.25);">
+            <h4 style="color: var(--accent-color); font-weight: 700; font-size: 1.05rem; margin-bottom: 6px;">Area Surabaya & Jawa Timur</h4>
+            <p style="font-size: 0.85rem; opacity: 0.9;">Fasilitas kolam renang representatif untuk les privat dan kelas klub renang anak.</p>
+          </div>
         </div>
       </div>
-
     </div>
+
+    <!-- SECTION 3: PERTANYAAN UMUM (FAQ) -->
+    <div style="margin: 50px 0;">
+      <div style="text-align: center; margin-bottom: 35px;">
+        <h2 style="color: var(--primary-color); font-weight: 800; font-size: 1.75rem; margin-bottom: 8px;">Pertanyaan Umum (FAQ)</h2>
+        <p style="color: #64748b; font-size: 0.95rem;">Informasi seputar penggunaan platform Raport AYO RENANG</p>
+      </div>
+
+      <div style="max-width: 800px; margin: 0 auto;">
+        <div class="faq-item">
+          <h4>Bagaimana cara Orang Tua melihat Raport perkembangan anak?</h4>
+          <p>Ayah & Bunda cukup mengosongkan form login, lalu ketik nama anak di kolom pencarian di bagian atas halaman utama. Pilih nama murid, masukkan 4-digit PIN Akses yang diberikan pelatih, dan halaman raport akan langsung terbuka.</p>
+        </div>
+
+        <div class="faq-item">
+          <h4>Darimana Orang Tua mendapatkan PIN Akses?</h4>
+          <p>PIN Akses 4-digit diberikan oleh Pelatih atau Admin saat pertama kali murid didaftarkan ke dalam sistem les renang.</p>
+        </div>
+
+        <div class="faq-item">
+          <h4>Apakah Orang Tua perlu membuat akun email?</h4>
+          <p>Tidak perlu. Sistem AYO RENANG didesain tanpa hambatan pendaftaran akun untuk Wali Murid agar informasi perkembangan anak dapat diakses dengan cepat dan mudah.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 4: KONTAK RESMI & SOSIAL MEDIA -->
+    <div class="card" style="margin-top: 40px; padding: 32px 24px; text-align: center; background: linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(240,249,255,0.98) 100%); border: 1px solid rgba(0, 180, 216, 0.25);">
+      <h3 style="color: var(--primary-color); font-weight: 800; font-size: 1.3rem; margin-bottom: 8px;">Pendaftaran Kelas Baru & Layanan Informasi</h3>
+      <p style="color: #64748b; font-size: 0.93rem; max-width: 620px; margin: 0 auto 22px auto;">
+        Ingin mendaftarkan putra-putri Anda les renang atau berkonsultasi mengenai program yang cocok? Hubungi tim AYO RENANG:
+      </p>
+
+      <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+        <a href="https://wa.me/6289697755666" target="_blank" class="btn btn-accent" style="text-decoration: none;">
+          WhatsApp: +62 896-9775-5666
+        </a>
+        <a href="https://www.instagram.com/ayorenang.id/" target="_blank" class="btn btn-secondary" style="background: var(--primary-color); border: none; text-decoration: none;">
+          Instagram: @ayorenang.id
+        </a>
+      </div>
+    </div>
+
   </div>
 
   <!-- MODAL PIN / PASSWORD AKSES WALI MURID (CUSTOM IN-PAGE MODAL) -->
