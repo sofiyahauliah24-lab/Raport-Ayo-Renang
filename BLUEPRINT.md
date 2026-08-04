@@ -2,13 +2,13 @@
 
 ## 📋 Ringkasan Perjalanan Proyek
 
-Dokumen ini berisi catatan komprehensif mengenai kendala awal, perbaikan sistem, arsitektur hak akses baru, hingga integrasi Custom Domain **`ayorenang.my.id`** untuk aplikasi **AYO RENANG** (Sistem Catatan Perkembangan & Evaluasi Peserta Les Berenang).
+Dokumen ini berisi catatan komprehensif mengenai kendala awal, perbaikan sistem, arsitektur hak akses baru, integrasi Custom Domain **`ayorenang.my.id`**, hingga optimasi kecepatan loading (*Trailing Slash & Caching*) untuk aplikasi **AYO RENANG** (Sistem Catatan Perkembangan & Evaluasi Peserta Les Berenang).
 
 ---
 
 ## 🛠️ 1. Masalah Awal & Solusi Perbaikan
 
-| No | Masalah Paling Awal | Penyebab Utama | Solusi Perbaikan | Status |
+| No | Masalah / Kendala | Penyebab Utama | Solusi Perbaikan | Status |
 | :---: | :--- | :--- | :--- | :---: |
 | **1** | **Error 429 (Rate Limit Supabase)** saat pendaftaran akun baru. | Fitur *Confirm Email* bawaan Supabase aktif, menahan pendaftaran berturut-turut. | Menonaktifkan *Confirm Email* di Dashboard Supabase (Authentication -> Providers -> Email). | ✅ Selesai |
 | **2** | **"Permission Denied for Table Students"** saat membuka dashboard. | Schema PostgreSQL belum diberikan izin `GRANT` untuk role `anon` dan `authenticated`. | Memperbarui `setup.sql` dengan `GRANT ALL ON ALL TABLES IN SCHEMA public TO anon, authenticated;`. | ✅ Selesai |
@@ -16,6 +16,7 @@ Dokumen ini berisi catatan komprehensif mengenai kendala awal, perbaikan sistem,
 | **4** | **Alur Orang Tua Rumit** (*"Belum Ada Peserta Terhubung"*). | Orang tua diwajibkan membuat akun & melakukan sinkronisasi email rumit. | Mengubah alur: Orang tua **tanpa perlu login/daftar**, cukup cari nama anak & masukkan **PIN 4-Digit**. | ✅ Selesai |
 | **5** | **Pop-Up Browser Kaku (`prompt()`)** saat input PIN Wali. | Menggunakan fungsi bawaan `prompt()` browser yang kurang rapi di mobile. | Mengganti dengan **Custom In-Page Glassmorphic Modal UI** di tengah halaman web. | ✅ Selesai |
 | **6** | **URL Menggunakan `.html`**. | Struktur file HTML tunggal di root. | Merestrukturisasi halaman ke sub-folder (`login/index.html`, `admin/index.html`, dll) untuk mendukung **Clean URLs**. | ✅ Selesai |
+| **7** | **Loading Tautan Selain Index Terasa Lambat**. | Permintaan URL tanpa trailing slash memicu HTTP 301 Redirect dari GitHub Pages. | Menambahkan **Trailing Slash (`/`)** pada seluruh tautan navigasi (`/login/`, `/admin/`, dll) dan menerapkan *root-relative asset caching*. | ✅ Selesai |
 
 ---
 
@@ -26,11 +27,11 @@ Sistem dirancang dengan pemisahan peran yang tegas untuk keamanan dan kemudahan 
 ```mermaid
 flowchart TD
     A[Pengunjung Web / Orang Tua] -->|1. Ketik Nama Anak| B[Cari Murid di Halaman Utama]
-    B -->|2. Masukkan PIN Akses| C[Lihat Raport Evaluasi /raport]
+    B -->|2. Masukkan PIN Akses| C[Lihat Raport Evaluasi /raport/]
     
-    D[Staff Kursus] -->|Login di /login| E{Role Check}
-    E -->|Role: Pelatih| F[Panel Pelatih /admin]
-    E -->|Role: Administrator| G[Panel Admin /admin]
+    D[Staff Kursus] -->|Login di /login/| E{Role Check}
+    E -->|Role: Pelatih| F[Panel Pelatih /admin/]
+    E -->|Role: Administrator| G[Panel Admin /admin/]
     
     F -->|Akses| H[Input & Edit Evaluasi Sesi Latihan]
     G -->|Akses Penuh| H
@@ -44,7 +45,7 @@ flowchart TD
    - Menginputkan nama anak di kolom pencarian.
    - Menginputkan **PIN Akses 4-digit** untuk membuka halaman raport.
 2. **Pelatih (Coach)**
-   - Login via `https://ayorenang.my.id/login`.
+   - Login via `https://ayorenang.my.id/login/`.
    - Mengisi materi latihan, hasil evaluasi (*Belum Bisa, Mulai Berkembang, Berkembang, Sangat Baik*), dan catatan detail perkembangan murid.
 3. **Administrator (Admin)**
    - Memiliki seluruh hak akses Pelatih.
@@ -56,13 +57,15 @@ flowchart TD
 
 ## 🌐 3. Daftar Clean URL Resmi (`ayorenang.my.id`)
 
-| Nama Halaman | Fungsi Utama | Clean URL Resmi |
+| Nama Halaman | Fungsi Utama | Clean URL Resmi (Dengan Trailing Slash) |
 | :--- | :--- | :--- |
 | **🏠 Halaman Utama & Pencarian** | Pencarian nama anak bagi Orang Tua | [`https://ayorenang.my.id/`](https://ayorenang.my.id/) |
-| **🔑 Portal Masuk Staff** | Login khusus Pelatih & Administrator | [`https://ayorenang.my.id/login`](https://ayorenang.my.id/login) |
-| **📝 Registrasi Staff Baru** | Pendaftaran akun Pelatih / Admin baru | [`https://ayorenang.my.id/register`](https://ayorenang.my.id/register) |
-| **🖥️ Panel Pengelola Staff** | Dashboard Input Evaluasi & Data Murid | [`https://ayorenang.my.id/admin`](https://ayorenang.my.id/admin) |
-| **📋 Halaman Raport Murid** | Lembar riwayat evaluasi latihan anak | [`https://ayorenang.my.id/raport`](https://ayorenang.my.id/raport) |
+| **🔑 Portal Masuk Staff** | Login khusus Pelatih & Administrator | [`https://ayorenang.my.id/login/`](https://ayorenang.my.id/login/) |
+| **📝 Registrasi Staff Baru** | Pendaftaran akun Pelatih / Admin baru | [`https://ayorenang.my.id/register/`](https://ayorenang.my.id/register/) |
+| **🖥️ Panel Pengelola Staff** | Dashboard Input Evaluasi & Data Murid | [`https://ayorenang.my.id/admin/`](https://ayorenang.my.id/admin/) |
+| **📋 Halaman Raport Murid** | Lembar riwayat evaluasi latihan anak | [`https://ayorenang.my.id/raport/`](https://ayorenang.my.id/raport/) |
+
+> **Catatan Optimasi Kecepatan**: Seluruh tautan menggunakan akhiran **Trailing Slash (`/`)** untuk mencegah penundaan HTTP 301 Redirect dari GitHub Pages sehingga halaman terbuka secara instan.
 
 ---
 
@@ -87,6 +90,7 @@ File [`CNAME`](file:///C:/Users/jefry/.gemini/antigravity/scratch/Raport-Ayo-Ren
 Raport-Ayo-Renang/
 ├── CNAME                    # Domain config: ayorenang.my.id
 ├── BLUEPRINT.md             # Dokumentasi proyek & perbaikan ini
+├── Dokumentasi_AYO_RENANG.pdf # Dokumen PDF resmi
 ├── setup.sql                # Schema & RLS policies Supabase
 ├── index.html               # Halaman utama & pencarian publik
 ├── css/
@@ -99,13 +103,13 @@ Raport-Ayo-Renang/
 │   ├── admin.js             # Logic dashboard pelatih & admin
 │   └── raport.js            # Logic render timeline & verifikasi PIN
 ├── login/
-│   └── index.html           # Clean URL /login
+│   └── index.html           # Clean URL /login/
 ├── register/
-│   └── index.html           # Clean URL /register
+│   └── index.html           # Clean URL /register/
 ├── admin/
-│   └── index.html           # Clean URL /admin
+│   └── index.html           # Clean URL /admin/
 └── raport/
-    └── index.html           # Clean URL /raport
+    └── index.html           # Clean URL /raport/
 ```
 
 ---
