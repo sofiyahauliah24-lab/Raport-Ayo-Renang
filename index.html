@@ -8,59 +8,70 @@
 </head>
 <body>
 
-  <div class="container">
-    <div class="landing-hero">
-      <div class="logo-display">
-        <h2>AYO <span>RENANG</span></h2>
-        <p>Sistem Catatan Perkembangan & Evaluasi Peserta</p>
+  <header style="background: transparent; box-shadow: none; border: none; margin-bottom: 10px;">
+    <div class="container header-content" style="justify-content: flex-end;">
+      <a href="login.html" class="btn btn-secondary btn-small" style="color: var(--primary-color); border-color: rgba(11, 60, 93, 0.2); background: rgba(255,255,255,0.7);">
+        🔑 Portal Pelatih & Administrator
+      </a>
+    </div>
+  </header>
+
+  <div class="container" style="max-width: 900px;">
+    <div class="landing-hero" style="padding-top: 20px;">
+      <div class="logo-display" style="margin-bottom: 20px;">
+        <h2 style="font-size: 2.8rem; letter-spacing: -0.5px;">AYO <span style="color: var(--accent-color);">RENANG</span></h2>
+        <p style="font-size: 1.05rem; font-weight: 600; color: var(--secondary-color);">Sistem Catatan Perkembangan & Evaluasi Peserta Les Berenang</p>
       </div>
+
+      <h1 style="font-size: 2.4rem; font-weight: 800; color: var(--primary-color); line-height: 1.3; margin-bottom: 15px;">
+        Pantau Perkembangan & Keahlian Berenang <span>Buah Hati Anda</span>
+      </h1>
+      <p class="subtitle" style="font-size: 1.1rem; max-width: 720px; margin: 0 auto 35px auto; color: #4a5568; line-height: 1.7;">
+        Selamat datang di platform evaluasi resmi <strong>AYO RENANG</strong>. Kami memudahkan Bapak/Ibu Wali Murid untuk memantau hasil latihan, keberanian di dalam air, dan catatan langsung dari pelatih secara transparan tanpa perlu mendaftar akun.
+      </p>
       
       <!-- PENCARIAN PUSAT UNTUK ORANG TUA / WALI -->
-      <div class="card" style="max-width: 650px; margin: 0 auto 40px auto; padding: 30px; text-align: left;">
-        <h2 style="color: var(--primary-color); font-weight: 800; font-size: 1.5rem; margin-bottom: 8px; text-align: center;">
-          🔍 Cari Catatan Perkembangan Anak
-        </h2>
-        <p style="color: #666; font-size: 0.95rem; text-align: center; margin-bottom: 20px;">
-          Ketik nama anak/peserta les untuk melihat Raport Hasil Evaluasi Latihan Berenang.
-        </p>
+      <div class="card" style="max-width: 680px; margin: 0 auto 40px auto; padding: 32px; text-align: left; background: rgba(255, 255, 255, 0.95); border: 2px solid rgba(0, 210, 196, 0.25); box-shadow: 0 12px 35px rgba(0, 0, 0, 0.07);">
+        <div style="text-align: center; margin-bottom: 20px;">
+          <h2 style="color: var(--primary-color); font-weight: 800; font-size: 1.45rem; margin-bottom: 6px;">
+            🔍 Cari Raport Latihan Anak
+          </h2>
+          <p style="color: #64748b; font-size: 0.93rem;">
+            Ketik nama depan atau nama lengkap anak Anda untuk membuka catatan evaluasi latihan.
+          </p>
+        </div>
 
         <div class="search-box" style="margin-bottom: 15px;">
-          <input type="text" id="parent-search-input" placeholder="Masukkan nama peserta les (cth: Budi)..." style="font-size: 1.1rem; padding: 14px 20px; border-radius: 30px; border: 2px solid var(--secondary-color);">
+          <input type="text" id="parent-search-input" placeholder="Ketik nama anak Anda (contoh: Budi, Rian, Clarissa)..." style="font-size: 1.05rem; padding: 14px 22px; border-radius: 30px; border: 2px solid var(--secondary-color); width: 100%;">
         </div>
 
         <div id="search-spinner" class="spinner" style="display: none;"></div>
-        <div id="parent-search-results" style="display: flex; flex-direction: column; gap: 10px;"></div>
+        <div id="parent-search-results" style="display: flex; flex-direction: column; gap: 12px; margin-top: 15px;"></div>
       </div>
 
-      <div id="auth-status-section" style="margin-top: 30px;">
-        <p style="color: #666; font-size: 0.9rem; margin-bottom: 10px;">Pengelola Kursus & Pelatih:</p>
-        <a href="login.html" class="btn btn-primary" style="font-size: 0.95rem; padding: 10px 25px;">
-          🔑 Portal Pelatih & Administrator
-        </a>
-      </div>
-
-      <div class="landing-features" style="margin-top: 50px;">
-        <div class="feature-box">
-          <div class="feature-icon">🏊‍♂️</div>
-          <h3>Pencarian Cepat</h3>
-          <p>Orang Tua dapat mencari nama anak tanpa harus melakukan pendaftaran akun rumit.</p>
+      <!-- HIGHLIGHT INFORMASI (HUMANIZED & INFORMATIF) -->
+      <div class="landing-features" style="margin-top: 40px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));">
+        <div class="feature-box" style="padding: 25px; text-align: left; background: rgba(255, 255, 255, 0.85); border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.5);">
+          <div class="feature-icon" style="font-size: 2rem; margin-bottom: 10px;">🏊‍♂️</div>
+          <h3 style="font-size: 1.1rem; color: var(--primary-color); margin-bottom: 8px;">Akses Langsung Wali Murid</h3>
+          <p style="font-size: 0.88rem; color: #64748b; line-height: 1.6;">Orang tua tidak perlu repot mengingat kata sandi. Cukup ketik nama anak di kolom pencarian untuk melihat riwayat evaluasi kapan saja.</p>
         </div>
-        <div class="feature-box">
-          <div class="feature-icon">📝</div>
-          <h3>Evaluasi Pelatih</h3>
-          <p>Pelatih mengisi materi latihan, hasil evaluasi, dan catatan perkembangan secara rutin.</p>
+        <div class="feature-box" style="padding: 25px; text-align: left; background: rgba(255, 255, 255, 0.85); border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.5);">
+          <div class="feature-icon" style="font-size: 2rem; margin-bottom: 10px;">📝</div>
+          <h3 style="font-size: 1.1rem; color: var(--primary-color); margin-bottom: 8px;">Catatan Mendetail Pelatih</h3>
+          <p style="font-size: 0.88rem; color: #64748b; line-height: 1.6;">Pelatih mencatat materi latihan tiap sesi, perkembangan teknik gaya, keberanian di dalam air, serta rekomendasi latihan berikutnya.</p>
         </div>
-        <div class="feature-box">
-          <div class="feature-icon">🛡️</div>
-          <h3>Akses Admin & Pelatih</h3>
-          <p>Administrator mengelola data peserta, sedangkan Pelatih fokus pada evaluasi latihan.</p>
+        <div class="feature-box" style="padding: 25px; text-align: left; background: rgba(255, 255, 255, 0.85); border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.5);">
+          <div class="feature-icon" style="font-size: 2rem; margin-bottom: 10px;">🛡️</div>
+          <h3 style="font-size: 1.1rem; color: var(--primary-color); margin-bottom: 8px;">Portal Terstruktur Staff</h3>
+          <p style="font-size: 0.88rem; color: #64748b; line-height: 1.6;">Administrator mengelola pendaftaran peserta & akun pelatih, sedangkan Pelatih fokus menginput hasil evaluasi sesi latihan.</p>
         </div>
       </div>
     </div>
   </div>
 
-  <footer class="footer">
-    <p>&copy; 2026 AYO RENANG. Dikembangkan untuk kemajuan olahraga dan keselamatan anak.</p>
+  <footer class="footer" style="margin-top: 40px; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 25px;">
+    <p>&copy; 2026 <strong>AYO RENANG</strong> — Dedicated for youth swimming progress and water safety education.</p>
   </footer>
 
   <!-- Supabase CDN & Client Setup -->
