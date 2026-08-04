@@ -13,11 +13,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (session) {
     const profile = await getCurrentProfile();
     if (profile) {
-      if (profile.role === "parent") {
-        window.location.href = "dashboard.html";
-      } else {
-        window.location.href = "admin.html";
-      }
+      window.location.href = "../admin";
       return;
     }
   }
@@ -84,12 +80,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       // 4. Arahkan sesuai role
       setTimeout(() => {
-        if (profile.role === "parent") {
-          window.location.href = "dashboard.html";
-        } else if (profile.role === "admin" || profile.role === "coach") {
-          window.location.href = "admin.html";
+        if (profile.role === "admin" || profile.role === "coach") {
+          window.location.href = "../admin";
         } else {
-          window.location.href = "index.html";
+          window.location.href = "../";
         }
       }, 1000);
 

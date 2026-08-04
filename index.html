@@ -10,7 +10,7 @@
 
   <header style="background: transparent; box-shadow: none; border: none; margin-bottom: 10px;">
     <div class="container header-content" style="justify-content: flex-end;">
-      <a href="login.html" class="btn btn-secondary btn-small" style="color: var(--primary-color); border-color: rgba(11, 60, 93, 0.2); background: rgba(255,255,255,0.7);">
+      <a href="login" class="btn btn-secondary btn-small" style="color: var(--primary-color); border-color: rgba(11, 60, 93, 0.2); background: rgba(255,255,255,0.7);">
         🔑 Portal Pelatih & Administrator
       </a>
     </div>
@@ -152,7 +152,7 @@
           }
 
           sessionStorage.setItem(`raport_pin_${currentTargetStudent.id}`, enteredPin);
-          window.location.href = `raport.html?student_id=${currentTargetStudent.id}`;
+          window.location.href = `raport?student_id=${currentTargetStudent.id}`;
         });
       }
 
@@ -215,7 +215,7 @@
                   if (student.access_pin) {
                     openPinModal(student);
                   } else {
-                    window.location.href = `raport.html?student_id=${student.id}`;
+                    window.location.href = `raport?student_id=${student.id}`;
                   }
                 });
 

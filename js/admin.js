@@ -398,7 +398,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       detailStudentAvatar.innerHTML = `<div class="student-avatar" style="margin-bottom:0;">🏊‍♂️</div>`;
     }
 
-    btnViewRaportFull.href = `raport.html?student_id=${studentId}`;
+    btnViewRaportFull.href = `../raport?student_id=${studentId}`;
 
     // Reset Form Evaluasi ke State Baru
     resetEvaluationForm();

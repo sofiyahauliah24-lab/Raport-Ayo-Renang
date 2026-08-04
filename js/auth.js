@@ -72,7 +72,7 @@ async function getCurrentProfile() {
 async function requireAuth() {
   const session = await getCurrentSession();
   if (!session) {
-    window.location.href = "login.html";
+    window.location.href = "../login";
     return null;
   }
   return session;
@@ -90,12 +90,10 @@ async function requireRole(allowedRoles) {
   }
 
   if (!allowedRoles.includes(profile.role)) {
-    if (profile.role === "parent") {
-      window.location.href = "dashboard.html";
-    } else if (profile.role === "admin" || profile.role === "coach") {
-      window.location.href = "admin.html";
+    if (profile.role === "admin" || profile.role === "coach") {
+      window.location.href = "../admin";
     } else {
-      window.location.href = "login.html";
+      window.location.href = "../login";
     }
     return null;
   }
@@ -110,7 +108,7 @@ async function logout() {
   } catch (err) {
     console.error("Gagal logout:", err.message);
   } finally {
-    window.location.href = "login.html";
+    window.location.href = "../login";
   }
 }
 
@@ -118,13 +116,13 @@ async function logout() {
 supabaseClient.auth.onAuthStateChange((event, session) => {
   if (event === "SIGNED_OUT") {
     const path = window.location.pathname;
-    const isPublicPage = path.endsWith("login.html") ||
-                         path.endsWith("register.html") ||
+    const isPublicPage = path.includes("/login") ||
+                         path.includes("/register") ||
                          path.endsWith("index.html") ||
                          path === "/" ||
                          path === "";
     if (!isPublicPage) {
-      window.location.href = "login.html";
+      window.location.href = "../login";
     }
   }
 });
