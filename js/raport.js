@@ -88,7 +88,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     displayStatus.textContent = student.is_active ? "Aktif" : "Tidak Aktif";
 
     if (student.photo_url) {
-      photoContainer.innerHTML = `<img class="student-avatar" src="${student.photo_url}" alt="${student.student_name}">`;
+      photoContainer.innerHTML = `<img class="student-avatar" src="${student.photo_url}" alt="" onerror="this.outerHTML='<div class=\'student-avatar\'>🏊‍♂️</div>';">`;
     } else {
       photoContainer.innerHTML = `<div class="student-avatar">🏊‍♂️</div>`;
     }
