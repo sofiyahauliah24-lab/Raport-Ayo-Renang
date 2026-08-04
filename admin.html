@@ -30,9 +30,14 @@
     <div class="admin-layout">
       <!-- SIDEBAR: List Peserta -->
       <aside class="sidebar-section">
-        <button id="btn-toggle-add-student" class="btn btn-primary" style="width: 100%; margin-bottom: 20px;">
-          ➕ Tambah Peserta Baru
-        </button>
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+          <button id="btn-toggle-add-student" class="btn btn-primary" style="width: 100%;">
+            ➕ Tambah Peserta Baru
+          </button>
+          <button id="btn-toggle-add-staff" class="btn btn-secondary" style="width: 100%; color: var(--primary-color); border-color: var(--primary-color); display: none;">
+            👤 Tambah Akun Staff (Pelatih/Admin)
+          </button>
+        </div>
 
         <div class="card" style="padding: 15px;">
           <h3 style="margin-bottom: 10px; color: var(--primary-color);">Cari Peserta</h3>
@@ -94,6 +99,38 @@
             </div>
             <button type="submit" class="btn btn-accent" id="btn-save-student" style="width: 100%;">
               Simpan Data Murid
+            </button>
+          </form>
+        </div>
+
+        <!-- FORM: Tambah Akun Staff Baru (Khusus Admin) -->
+        <div class="modal-form" id="staff-form-container" style="display: none;">
+          <div class="action-bar">
+            <h2 style="color: var(--primary-color);">Registrasi Akun Staff Baru</h2>
+            <button class="btn btn-secondary btn-small" id="btn-cancel-staff">Batal</button>
+          </div>
+          <form id="staff-register-form">
+            <div class="form-group">
+              <label for="staff-name">Nama Lengkap Staff / Pelatih</label>
+              <input type="text" id="staff-name" required placeholder="Contoh: Coach Hendra">
+            </div>
+            <div class="form-group">
+              <label for="staff-email">Email Login</label>
+              <input type="email" id="staff-email" required placeholder="nama@email.com">
+            </div>
+            <div class="form-group">
+              <label for="staff-password">Password Login</label>
+              <input type="password" id="staff-password" required placeholder="Min. 6 karakter">
+            </div>
+            <div class="form-group">
+              <label for="staff-role">Role Hak Akses</label>
+              <select id="staff-role" required>
+                <option value="coach">Pelatih (Coach)</option>
+                <option value="admin">Administrator (Admin)</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary" id="btn-save-staff" style="width: 100%;">
+              Buatkan Akun Staff
             </button>
           </form>
         </div>

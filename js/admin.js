@@ -93,15 +93,85 @@ document.addEventListener("DOMContentLoaded", async () => {
     adminRoleLabel.textContent = currentUserRole === "admin" ? "Administrator" : "Pelatih (Coach)";
     evalCoachDisplay.value = currentUserName;
 
+    const btnToggleAddStaff = document.getElementById("btn-toggle-add-staff");
+    const staffFormContainer = document.getElementById("staff-form-container");
+    const btnCancelStaff = document.getElementById("btn-cancel-staff");
+    const staffRegisterForm = document.getElementById("staff-register-form");
+
     // --- PEMBEDAAN HAK AKSES ROLE (Pelatih vs Admin) ---
     if (currentUserRole === "coach") {
       // Pelatih fokus pada evaluasi latihan
       if (btnToggleAddStudent) btnToggleAddStudent.style.display = "none";
       if (btnDeleteStudent) btnDeleteStudent.style.display = "none";
+      if (btnToggleAddStaff) btnToggleAddStaff.style.display = "none";
     } else {
-      // Administrator memiliki akses penuh kelola data murid
+      // Administrator memiliki akses penuh kelola data murid dan buat akun staff
       if (btnToggleAddStudent) btnToggleAddStudent.style.display = "block";
       if (btnDeleteStudent) btnDeleteStudent.style.display = "inline-flex";
+      if (btnToggleAddStaff) btnToggleAddStaff.style.display = "block";
+    }
+
+    if (btnToggleAddStaff) {
+      btnToggleAddStaff.addEventListener("click", () => {
+        if (staffFormContainer) staffFormContainer.style.display = "block";
+        if (studentFormContainer) studentFormContainer.style.display = "none";
+        mainDefaultState.style.display = "none";
+        studentDetailContainer.style.display = "none";
+        if (staffRegisterForm) staffRegisterForm.reset();
+      });
+    }
+
+    if (btnCancelStaff) {
+      btnCancelStaff.addEventListener("click", () => {
+        if (staffFormContainer) staffFormContainer.style.display = "none";
+        if (activeStudentId) {
+          studentDetailContainer.style.display = "block";
+        } else {
+          mainDefaultState.style.display = "block";
+        }
+      });
+    }
+
+    if (staffRegisterForm) {
+      staffRegisterForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const name = document.getElementById("staff-name").value.trim();
+        const email = document.getElementById("staff-email").value.trim();
+        const pass = document.getElementById("staff-password").value;
+        const role = document.getElementById("staff-role").value;
+        const btnSaveStaff = document.getElementById("btn-save-staff");
+
+        if (!name || !email || !pass) {
+          showAlert("Harap lengkapi seluruh data staff.", "danger");
+          return;
+        }
+
+        btnSaveStaff.disabled = true;
+        btnSaveStaff.textContent = "Mendaftarkan...";
+
+        try {
+          const { data, error } = await supabaseClient.auth.signUp({
+            email,
+            password: pass,
+            options: {
+              data: { full_name: name, role: role }
+            }
+          });
+
+          if (error) throw error;
+
+          showAlert(`✅ Akun staff baru (${name} - ${role === 'admin' ? 'Admin' : 'Pelatih'}) berhasil dibuat!`, "success");
+          staffRegisterForm.reset();
+          staffFormContainer.style.display = "none";
+          mainDefaultState.style.display = "block";
+
+        } catch (err) {
+          showAlert("Gagal membuat akun staff: " + err.message, "danger");
+        } finally {
+          btnSaveStaff.disabled = false;
+          btnSaveStaff.textContent = "Buatkan Akun Staff";
+        }
+      });
     }
 
     // Load initial data murid
