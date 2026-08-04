@@ -63,18 +63,36 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!isStaff && student.access_pin) {
       const savedPin = sessionStorage.getItem(`raport_pin_${studentId}`) || urlParams.get("pin");
       
-      if (savedPin !== student.access_pin) {
+      if (savedPin !== student.access_pin.trim()) {
         headerSpinner.style.display = "none";
         timelineSpinner.style.display = "none";
         
-        // Tampilkan modal PIN / Password Akses
-        const userEnteredPin = prompt(`🔒 Akses Terproteksi!\n\nMasukkan Password/PIN Akses untuk melihat Raport "${student.student_name}" (Diberikan oleh Pelatih/Admin):`);
-        
-        if (!userEnteredPin || userEnteredPin.trim() !== student.access_pin.trim()) {
-          showAlert("⛔ Password / PIN Akses salah atau dibatalkan. Silakan minta PIN akses ke Pelatih / Admin.", "danger");
-          return;
-        } else {
-          sessionStorage.setItem(`raport_pin_${studentId}`, userEnteredPin.trim());
+        const pinModalOverlay = document.getElementById("pin-modal-overlay");
+        const pinModalTitle = document.getElementById("pin-modal-title");
+        const pinModalInput = document.getElementById("pin-modal-input");
+        const pinModalError = document.getElementById("pin-modal-error");
+        const pinModalForm = document.getElementById("pin-modal-form");
+
+        if (pinModalOverlay) {
+          pinModalTitle.innerHTML = `Masukkan Password / PIN Akses Wali Murid untuk melihat Raport <strong>"${student.student_name}"</strong>:`;
+          pinModalOverlay.style.display = "flex";
+          setTimeout(() => pinModalInput.focus(), 100);
+
+          await new Promise((resolve) => {
+            pinModalForm.addEventListener("submit", (e) => {
+              e.preventDefault();
+              const enteredPin = pinModalInput.value.trim();
+              if (enteredPin !== student.access_pin.trim()) {
+                pinModalError.textContent = "❌ Password / PIN Akses salah! Silakan tanyakan ke Pelatih/Admin.";
+                pinModalError.style.display = "block";
+                pinModalInput.focus();
+              } else {
+                sessionStorage.setItem(`raport_pin_${studentId}`, enteredPin);
+                pinModalOverlay.style.display = "none";
+                resolve();
+              }
+            });
+          });
         }
       }
     }

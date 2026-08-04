@@ -135,21 +135,149 @@
                   </div>
                 `;
 
+  <!-- MODAL PIN / PASSWORD AKSES WALI MURID (CUSTOM IN-PAGE MODAL) -->
+  <div id="pin-modal-overlay" class="modal-overlay" style="display: none;">
+    <div class="card" style="max-width: 420px; width: 100%; text-align: center; padding: 30px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.25); animation: modalFadeIn 0.25s ease;">
+      <div style="font-size: 2.8rem; margin-bottom: 8px;">🔑</div>
+      <h3 style="color: var(--primary-color); font-weight: 800; font-size: 1.3rem; margin-bottom: 6px;">Akses Raport Terproteksi</h3>
+      <p id="pin-modal-title" style="color: #64748b; font-size: 0.92rem; margin-bottom: 18px;">
+        Masukkan Password / PIN Akses Wali Murid untuk melihat Raport.
+      </p>
+
+      <div id="pin-modal-error" class="alert alert-danger" style="display: none; font-size: 0.85rem; padding: 8px 12px; margin-bottom: 15px;"></div>
+
+      <form id="pin-modal-form">
+        <div class="form-group" style="margin-bottom: 20px;">
+          <input type="password" id="pin-modal-input" placeholder="Masukkan PIN (cth: 1234)..." required style="font-size: 1.2rem; text-align: center; letter-spacing: 3px; padding: 12px 18px; border-radius: 12px; border: 2px solid var(--secondary-color); width: 100%;">
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+          <button type="button" id="btn-pin-cancel" class="btn btn-secondary" style="flex: 1; justify-content: center;">
+            Batal
+          </button>
+          <button type="submit" id="btn-pin-submit" class="btn btn-accent" style="flex: 2; justify-content: center;">
+            📋 Buka Raport
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Supabase CDN & Client Setup -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabaseClient.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const searchInput = document.getElementById("parent-search-input");
+      const searchSpinner = document.getElementById("search-spinner");
+      const searchResults = document.getElementById("parent-search-results");
+      let searchTimeout = null;
+
+      // Custom PIN Modal elements
+      const pinModalOverlay = document.getElementById("pin-modal-overlay");
+      const pinModalTitle = document.getElementById("pin-modal-title");
+      const pinModalInput = document.getElementById("pin-modal-input");
+      const pinModalError = document.getElementById("pin-modal-error");
+      const pinModalForm = document.getElementById("pin-modal-form");
+      const btnPinCancel = document.getElementById("btn-pin-cancel");
+
+      let currentTargetStudent = null;
+
+      function openPinModal(student) {
+        currentTargetStudent = student;
+        pinModalTitle.innerHTML = `Masukkan Password / PIN Akses Wali Murid untuk melihat Raport <strong>"${student.student_name}"</strong>:`;
+        pinModalInput.value = "";
+        pinModalError.style.display = "none";
+        pinModalOverlay.style.display = "flex";
+        setTimeout(() => pinModalInput.focus(), 100);
+      }
+
+      function closePinModal() {
+        pinModalOverlay.style.display = "none";
+        currentTargetStudent = null;
+      }
+
+      if (btnPinCancel) btnPinCancel.addEventListener("click", closePinModal);
+
+      if (pinModalForm) {
+        pinModalForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+          if (!currentTargetStudent) return;
+
+          const enteredPin = pinModalInput.value.trim();
+          if (enteredPin !== currentTargetStudent.access_pin.trim()) {
+            pinModalError.textContent = "❌ Password / PIN Akses salah! Silakan tanyakan ke Pelatih/Admin.";
+            pinModalError.style.display = "block";
+            pinModalInput.focus();
+            return;
+          }
+
+          sessionStorage.setItem(`raport_pin_${currentTargetStudent.id}`, enteredPin);
+          window.location.href = `raport.html?student_id=${currentTargetStudent.id}`;
+        });
+      }
+
+      if (searchInput) {
+        searchInput.addEventListener("input", (e) => {
+          const query = e.target.value.trim();
+          if (searchTimeout) clearTimeout(searchTimeout);
+
+          if (query.length < 2) {
+            searchResults.innerHTML = "";
+            searchSpinner.style.display = "none";
+            return;
+          }
+
+          searchSpinner.style.display = "block";
+          searchTimeout = setTimeout(async () => {
+            try {
+              const { data: students, error } = await supabaseClient
+                .from("students")
+                .select("*")
+                .ilike("student_name", `%${query}%`)
+                .order("student_name")
+                .limit(10);
+
+              if (error) throw error;
+
+              searchSpinner.style.display = "none";
+              searchResults.innerHTML = "";
+
+              if (!students || students.length === 0) {
+                searchResults.innerHTML = `<div style="text-align:center; padding:15px; color:#888; background:rgba(0,0,0,0.02); border-radius:10px;">Nama peserta "${query}" tidak ditemukan. Pastikan ejaan nama sudah benar.</div>`;
+                return;
+              }
+
+              students.forEach(student => {
+                const card = document.createElement("div");
+                card.style.cssText = "display:flex; justify-content:space-between; align-items:center; background:white; padding:15px 20px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.05); border:1px solid #e2e8f0; flex-wrap:wrap; gap:10px;";
+                
+                const photoHtml = student.photo_url 
+                  ? `<img src="${student.photo_url}" style="width:45px; height:45px; border-radius:50%; object-fit:cover;">`
+                  : `<div style="width:45px; height:45px; border-radius:50%; background:#e2e8f0; display:flex; align-items:center; justify-content:center; font-size:1.4rem;">🏊‍♂️</div>`;
+
+                const parentText = student.parent_name || "-";
+
+                const infoDiv = document.createElement("div");
+                infoDiv.style.cssText = "display:flex; align-items:center; gap:15px;";
+                infoDiv.innerHTML = `
+                  ${photoHtml}
+                  <div>
+                    <strong style="color:var(--primary-color); font-size:1.1rem;">${student.student_name}</strong>
+                    <div style="font-size:0.85rem; color:#666;">Usia: ${student.age} th ${parentText !== '-' ? '| Wali: ' + parentText : ''}</div>
+                  </div>
+                `;
+
                 const btnRaport = document.createElement("button");
                 btnRaport.className = "btn btn-accent btn-small";
                 btnRaport.style.cursor = "pointer";
                 btnRaport.textContent = "📋 Lihat Raport";
                 btnRaport.addEventListener("click", () => {
                   if (student.access_pin) {
-                    const pin = prompt(`🔑 Masukkan Password/PIN Akses Wali Murid untuk "${student.student_name}":`);
-                    if (pin === null) return; // Batal
-                    if (pin.trim() !== student.access_pin.trim()) {
-                      alert("❌ Password/PIN Akses salah! Silakan tanyakan PIN akses ke Pelatih / Admin.");
-                      return;
-                    }
-                    sessionStorage.setItem(`raport_pin_${student.id}`, pin.trim());
+                    openPinModal(student);
+                  } else {
+                    window.location.href = `raport.html?student_id=${student.id}`;
                   }
-                  window.location.href = `raport.html?student_id=${student.id}`;
                 });
 
                 card.appendChild(infoDiv);

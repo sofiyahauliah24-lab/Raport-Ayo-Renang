@@ -743,20 +743,31 @@ textarea.notes-textarea {
   margin-top: 50px;
 }
 
-/* Responsive fixes */
-@media (max-width: 768px) {
-  header .header-content {
-    flex-direction: column;
-    text-align: center;
-    gap: 15px;
+/* Custom In-Page Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(11, 60, 93, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(10px);
   }
-  .user-info {
-    text-align: center;
-  }
-  .landing-hero h1 {
-    font-size: 2.5rem;
-  }
-  .landing-hero p.subtitle {
-    font-size: 1.1rem;
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
   }
 }
+
