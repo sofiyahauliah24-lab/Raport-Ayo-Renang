@@ -70,71 +70,6 @@
     </div>
   </div>
 
-  <footer class="footer" style="margin-top: 40px; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 25px;">
-    <p>&copy; 2026 <strong>AYO RENANG</strong> — Dedicated for youth swimming progress and water safety education.</p>
-  </footer>
-
-  <!-- Supabase CDN & Client Setup -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/supabaseClient.js"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const searchInput = document.getElementById("parent-search-input");
-      const searchSpinner = document.getElementById("search-spinner");
-      const searchResults = document.getElementById("parent-search-results");
-      let searchTimeout = null;
-
-      if (searchInput) {
-        searchInput.addEventListener("input", (e) => {
-          const query = e.target.value.trim();
-          if (searchTimeout) clearTimeout(searchTimeout);
-
-          if (query.length < 2) {
-            searchResults.innerHTML = "";
-            searchSpinner.style.display = "none";
-            return;
-          }
-
-          searchSpinner.style.display = "block";
-          searchTimeout = setTimeout(async () => {
-            try {
-              const { data: students, error } = await supabaseClient
-                .from("students")
-                .select("*")
-                .ilike("student_name", `%${query}%`)
-                .order("student_name")
-                .limit(10);
-
-              if (error) throw error;
-
-              searchSpinner.style.display = "none";
-              searchResults.innerHTML = "";
-
-              if (!students || students.length === 0) {
-                searchResults.innerHTML = `<div style="text-align:center; padding:15px; color:#888; background:rgba(0,0,0,0.02); border-radius:10px;">Nama peserta "${query}" tidak ditemukan. Pastikan ejaan nama sudah benar.</div>`;
-                return;
-              }
-
-              students.forEach(student => {
-                const card = document.createElement("div");
-                card.style.cssText = "display:flex; justify-content:space-between; align-items:center; background:white; padding:15px 20px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.05); border:1px solid #e2e8f0; flex-wrap:wrap; gap:10px;";
-                
-                const photoHtml = student.photo_url 
-                  ? `<img src="${student.photo_url}" style="width:45px; height:45px; border-radius:50%; object-fit:cover;">`
-                  : `<div style="width:45px; height:45px; border-radius:50%; background:#e2e8f0; display:flex; align-items:center; justify-content:center; font-size:1.4rem;">🏊‍♂️</div>`;
-
-                const parentText = student.parent_name || "-";
-
-                const infoDiv = document.createElement("div");
-                infoDiv.style.cssText = "display:flex; align-items:center; gap:15px;";
-                infoDiv.innerHTML = `
-                  ${photoHtml}
-                  <div>
-                    <strong style="color:var(--primary-color); font-size:1.1rem;">${student.student_name}</strong>
-                    <div style="font-size:0.85rem; color:#666;">Usia: ${student.age} th ${parentText !== '-' ? '| Wali: ' + parentText : ''}</div>
-                  </div>
-                `;
-
   <!-- MODAL PIN / PASSWORD AKSES WALI MURID (CUSTOM IN-PAGE MODAL) -->
   <div id="pin-modal-overlay" class="modal-overlay" style="display: none;">
     <div class="card" style="max-width: 420px; width: 100%; text-align: center; padding: 30px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.25); animation: modalFadeIn 0.25s ease;">
@@ -162,6 +97,10 @@
       </form>
     </div>
   </div>
+
+  <footer class="footer" style="margin-top: 40px; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 25px;">
+    <p>&copy; 2026 <strong>AYO RENANG</strong> — Dedicated for youth swimming progress and water safety education.</p>
+  </footer>
 
   <!-- Supabase CDN & Client Setup -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -205,7 +144,7 @@
           if (!currentTargetStudent) return;
 
           const enteredPin = pinModalInput.value.trim();
-          if (enteredPin !== currentTargetStudent.access_pin.trim()) {
+          if (enteredPin !== (currentTargetStudent.access_pin ? currentTargetStudent.access_pin.trim() : "")) {
             pinModalError.textContent = "❌ Password / PIN Akses salah! Silakan tanyakan ke Pelatih/Admin.";
             pinModalError.style.display = "block";
             pinModalInput.focus();
