@@ -1,6 +1,6 @@
 // ============================================================
 // js/register.js
-// Menangani pendaftaran akun baru (Orang Tua)
+// Menangani pendaftaran akun baru Staff (Pelatih / Admin)
 // ============================================================
 
 // Fungsi tampilkan pesan di layar
@@ -19,14 +19,11 @@ function hideAlert() {
 // Jalankan setelah halaman selesai dimuat
 document.addEventListener("DOMContentLoaded", async () => {
 
-  // Jika pengguna sudah login, langsung arahkan ke halaman yang sesuai
+  // Jika pengguna sudah login, langsung arahkan ke halaman admin
   const session = await getCurrentSession();
   if (session) {
-    const profile = await getCurrentProfile();
-    if (profile) {
-      window.location.href = (profile.role === "parent") ? "dashboard.html" : "admin.html";
-      return;
-    }
+    window.location.href = "admin.html";
+    return;
   }
 
   const form = document.getElementById("register-form");
@@ -44,7 +41,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const pass    = document.getElementById("reg-password").value;
     const passKon = document.getElementById("reg-confirm-password").value;
     const roleEl  = document.getElementById("reg-role");
-    const role    = roleEl ? roleEl.value : "parent";
+    const role    = roleEl ? roleEl.value : "coach";
 
     hideAlert();
 
@@ -104,10 +101,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       if (data.user) {
-        const targetPage = (role === "parent") ? "dashboard.html" : "admin.html";
         if (data.session) {
-          showAlert("✅ Pendaftaran berhasil! Mengarahkan...", "success");
-          setTimeout(() => { window.location.href = targetPage; }, 1500);
+          showAlert("✅ Pendaftaran akun staff berhasil! Mengarahkan ke portal...", "success");
+          setTimeout(() => { window.location.href = "admin.html"; }, 1500);
         } else {
           showAlert("✅ Pendaftaran berhasil! Silakan periksa email Anda untuk verifikasi atau langsung masuk jika verifikasi email dinonaktifkan.", "success");
           form.reset();
