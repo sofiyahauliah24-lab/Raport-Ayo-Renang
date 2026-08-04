@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Riwayat Perkembangan - AYO RENANG</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header>
+    <div class="container header-content">
+      <div>
+        <h1>AYO <span>RENANG</span></h1>
+        <p class="tagline">Sistem Catatan Perkembangan & Evaluasi Peserta</p>
+      </div>
+      <div class="nav-actions">
+        <a href="#" id="btn-back" class="btn btn-secondary btn-small">Kembali</a>
+        <button id="btn-logout" class="btn btn-secondary btn-small">Keluar</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Back Button / Page Title -->
+    <section class="action-bar">
+      <h2 style="color: var(--primary-color); font-weight: 700;">Riwayat Catatan Perkembangan</h2>
+    </section>
+
+    <!-- Student Detail Header Card -->
+    <div class="student-profile-bar" id="student-profile-header">
+      <div class="spinner" id="student-header-spinner"></div>
+      <div id="student-profile-content" style="display: none; width: 100%;">
+        <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+          <div id="student-photo-container"></div>
+          <div>
+            <h2 id="display-student-name" style="color: var(--primary-color); font-weight: 800; font-size: 2rem;">Nama Peserta</h2>
+            <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 10px;">
+              <span id="display-student-age" class="badge btn-secondary" style="color: var(--primary-color);">Usia: -</span>
+              <span id="display-student-parent" class="badge btn-secondary" style="color: var(--primary-color);">Wali: -</span>
+              <span id="display-student-status">-</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alert Box -->
+    <div id="alert-box" style="display: none;"></div>
+
+    <!-- Timeline Evaluasi -->
+    <div class="timeline" id="evaluations-timeline">
+      <div class="spinner" id="timeline-spinner"></div>
+      <!-- Timeline items will be injected by js/raport.js -->
+    </div>
+
+    <!-- Empty State -->
+    <div class="card no-data" id="empty-timeline-state" style="display: none;">
+      <div class="no-data-icon">📋</div>
+      <h3>Belum Ada Evaluasi</h3>
+      <p>Pelatih belum mengisi catatan atau hasil evaluasi untuk peserta ini.</p>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; 2026 AYO RENANG. Catatan Perkembangan Les Berenang.</p>
+  </footer>
+
+  <!-- Supabase CDN & Client Setup -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabaseClient.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/raport.js"></script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AYO RENANG - Catatan Perkembangan Les Berenang</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="container">
+    <div class="landing-hero">
+      <div class="logo-display">
+        <h2>AYO <span>RENANG</span></h2>
+        <p>Sistem Catatan Perkembangan & Evaluasi Peserta</p>
+      </div>
+      
+      <h1>Catat & Pantau Perkembangan Renang Anak Anda dengan <span>Mudah</span></h1>
+      <p class="subtitle">Sebuah platform digital bagi Pelatih untuk memberikan evaluasi mendetail dan bagi Orang Tua untuk memantau kemajuan berenang sang anak secara real-time.</p>
+      
+      <div id="auth-status-section">
+        <div class="spinner" id="loading-spinner"></div>
+        <div id="cta-buttons" style="display: none;">
+          <a href="login.html" class="btn btn-accent btn-primary" style="font-size: 1.1rem; padding: 15px 40px; border-radius: 50px;">Masuk ke Aplikasi</a>
+        </div>
+      </div>
+
+      <div class="landing-features">
+        <div class="feature-box">
+          <div class="feature-icon">🏊‍♂️</div>
+          <h3>Profil Peserta</h3>
+          <p>Simpan data nama, usia, status aktif, serta foto peserta dengan rapi dan aman.</p>
+        </div>
+        <div class="feature-box">
+          <div class="feature-icon">📝</div>
+          <h3>Evaluasi Sesi Latihan</h3>
+          <p>Pelatih dapat menginput materi latihan, hasil evaluasi, dan catatan perkembangan tanpa batasan karakter.</p>
+        </div>
+        <div class="feature-box">
+          <div class="feature-icon">🔒</div>
+          <h3>Akses Aman (RLS)</h3>
+          <p>Orang tua hanya dapat melihat perkembangan anak mereka sendiri. Kerahasiaan data terjamin penuh.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>&copy; 2026 AYO RENANG. Dikembangkan untuk kemajuan olahraga dan keselamatan anak.</p>
+  </footer>
+
+  <!-- Supabase CDN & Client Setup -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabaseClient.js"></script>
+  <script>
+    // Logic untuk mendeteksi sesi aktif dan me-redirect user
+    document.addEventListener("DOMContentLoaded", async () => {
+      const spinner = document.getElementById("loading-spinner");
+      const ctaButtons = document.getElementById("cta-buttons");
+
+      try {
+        const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
+        
+        if (sessionError) throw sessionError;
+
+        if (session) {
+          // User sudah login, ambil profile role
+          const { data: profile, error: profileError } = await supabaseClient
+            .from("profiles")
+            .select("role")
+            .eq("id", session.user.id)
+            .single();
+
+          if (profileError) {
+            console.error("Gagal mengambil profil:", profileError.message);
+            // Tetap tampilkan tombol login jika gagal memuat profil
+            spinner.style.display = "none";
+            ctaButtons.style.display = "block";
+            return;
+          }
+
+          // Arahkan ke dashboard yang sesuai
+          if (profile.role === "parent") {
+            window.location.href = "dashboard.html";
+          } else if (profile.role === "admin" || profile.role === "coach") {
+            window.location.href = "admin.html";
+          } else {
+            console.error("Role tidak dikenali:", profile.role);
+            spinner.style.display = "none";
+            ctaButtons.style.display = "block";
+          }
+        } else {
+          // User belum login
+          spinner.style.display = "none";
+          ctaButtons.style.display = "block";
+        }
+      } catch (err) {
+        console.error("Error checking auth status:", err.message);
+        spinner.style.display = "none";
+        ctaButtons.style.display = "block";
+      }
+    });
+  </script>
+</body>
+</html>

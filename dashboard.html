@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Orang Tua - AYO RENANG</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header>
+    <div class="container header-content">
+      <div>
+        <h1>AYO <span>RENANG</span></h1>
+        <p class="tagline">Sistem Catatan Perkembangan & Evaluasi Peserta</p>
+      </div>
+      <div class="nav-actions">
+        <div class="user-info">
+          <span class="user-name" id="parent-name">Memuat nama...</span>
+          <span class="user-role">Orang Tua / Wali</span>
+        </div>
+        <button id="btn-logout" class="btn btn-secondary btn-small">Keluar</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section style="margin-bottom: 20px;">
+      <h2 style="color: var(--primary-color); font-weight: 700; margin-bottom: 5px;">Daftar Peserta Les</h2>
+      <p style="color: #666; font-size: 0.95rem;">Berikut adalah anak/peserta les yang terdaftar di bawah akun Anda.</p>
+    </section>
+
+    <!-- Alert Box for Info or Error -->
+    <div id="alert-box" style="display: none;"></div>
+
+    <!-- Loading Spinner -->
+    <div class="spinner" id="loading-spinner"></div>
+
+    <!-- Student Cards Grid -->
+    <div class="grid" id="students-grid" style="display: none;">
+      <!-- Grid items will be injected by dashboard.js -->
+    </div>
+
+    <!-- Empty State -->
+    <div class="card no-data" id="empty-state" style="display: none;">
+      <div class="no-data-icon">🏊‍♂️</div>
+      <h3>Belum Ada Peserta Terhubung</h3>
+      <p>Hubungi Pelatih atau Administrator untuk mendaftarkan anak Anda ke sistem dan menyambungkannya dengan email Anda.</p>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; 2026 AYO RENANG. Sistem Catatan Perkembangan Les Berenang.</p>
+  </footer>
+
+  <!-- Supabase CDN & Client Setup -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabaseClient.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>
