@@ -146,3 +146,16 @@ GRANT ALL ON ALL ROUTINES IN SCHEMA public TO anon, authenticated;
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO anon, authenticated;
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO anon, authenticated;
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON ROUTINES TO anon, authenticated;
+
+-- 10. BUCKET STORAGE UNTUK FOTO PESERTA (OPSIONAL)
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('student-photos', 'student-photos', true)
+ON CONFLICT (id) DO NOTHING;
+
+DROP POLICY IF EXISTS "Public Student Photos Access" ON storage.objects;
+CREATE POLICY "Public Student Photos Access" ON storage.objects
+  FOR SELECT USING (bucket_id = 'student-photos');
+
+DROP POLICY IF EXISTS "Authenticated users can upload student photos" ON storage.objects;
+CREATE POLICY "Authenticated users can upload student photos" ON storage.objects
+  FOR INSERT WITH CHECK (bucket_id = 'student-photos' AND auth.role() = 'authenticated');

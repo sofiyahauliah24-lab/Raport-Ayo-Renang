@@ -215,13 +215,24 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
+  // Helper membaca file sebagai Data URL
+  function readFileAsDataURL(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = err => reject(err);
+      reader.readAsDataURL(file);
+    });
+  }
+
   // Register Student Submit
   studentRegisterForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const name = document.getElementById("student-name").value.trim();
     const age = parseInt(document.getElementById("student-age").value);
     const parentId = studentParentSelect.value.trim();
-    const photoUrl = document.getElementById("student-photo").value.trim() || null;
+    const photoFileInput = document.getElementById("student-photo-file");
+    const photoUrlInput = document.getElementById("student-photo").value.trim();
     const isActive = document.getElementById("student-status").value === "true";
 
     const btnSave = document.getElementById("btn-save-student");
@@ -229,6 +240,43 @@ document.addEventListener("DOMContentLoaded", async () => {
     btnSave.textContent = "Menyimpan...";
 
     try {
+      let photoUrl = photoUrlInput || null;
+
+      // Jika ada file foto yang diunggah
+      if (photoFileInput && photoFileInput.files && photoFileInput.files.length > 0) {
+        const file = photoFileInput.files[0];
+        btnSave.textContent = "Mengunggah Foto...";
+
+        try {
+          const fileExt = file.name.split(".").pop();
+          const fileName = `student_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
+
+          const { data: uploadData, error: uploadError } = await supabaseClient
+            .storage
+            .from("student-photos")
+            .upload(fileName, file, { cacheControl: "3600", upsert: true });
+
+          if (!uploadError && uploadData) {
+            const { data: urlData } = supabaseClient
+              .storage
+              .from("student-photos")
+              .getPublicUrl(fileName);
+
+            if (urlData && urlData.publicUrl) {
+              photoUrl = urlData.publicUrl;
+            }
+          } else {
+            console.warn("Storage fallback to Data URL:", uploadError?.message);
+            photoUrl = await readFileAsDataURL(file);
+          }
+        } catch (storageErr) {
+          console.warn("Gagal upload storage, fallback Data URL:", storageErr.message);
+          photoUrl = await readFileAsDataURL(file);
+        }
+      }
+
+      btnSave.textContent = "Menyimpan Data...";
+
       const { data, error } = await supabaseClient
         .from("students")
         .insert({
@@ -244,6 +292,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (error) throw error;
 
       showAlert("Data murid berhasil ditambahkan!", "success");
+      studentRegisterForm.reset();
       studentFormContainer.style.display = "none";
       btnSave.disabled = false;
       btnSave.textContent = "Simpan Data Murid";
