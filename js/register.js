@@ -87,7 +87,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (error.message.toLowerCase().includes("rate limit") || 
             error.message.toLowerCase().includes("too many") ||
             error.status === 429) {
-          throw new Error("⚠️ Terlalu banyak percobaan pendaftaran (Supabase Rate Limit). Matikan fitur 'Confirm Email' di Dashboard Supabase (Authentication -> Providers -> Email) atau tunggu 1 jam sebelum mencoba lagi.");
+          throw new Error("Terlalu banyak percobaan pendaftaran (Supabase Rate Limit). Matikan fitur 'Confirm Email' di Dashboard Supabase (Authentication -> Providers -> Email) atau tunggu 1 jam sebelum mencoba lagi.");
         }
         if (error.message.includes("Failed to fetch")) {
           throw new Error("Tidak dapat terhubung ke server. Periksa koneksi internet Anda.");
@@ -102,10 +102,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       if (data.user) {
         if (data.session) {
-          showAlert("✅ Pendaftaran akun staff berhasil! Mengarahkan ke portal...", "success");
+          showAlert("Pendaftaran akun staff berhasil! Mengarahkan ke portal...", "success");
           setTimeout(() => { window.location.href = "/admin/"; }, 1500);
         } else {
-          showAlert("✅ Pendaftaran berhasil! Silakan periksa email Anda untuk verifikasi atau langsung masuk jika verifikasi email dinonaktifkan.", "success");
+          showAlert("Pendaftaran berhasil! Silakan periksa email Anda untuk verifikasi atau langsung masuk jika verifikasi email dinonaktifkan.", "success");
           form.reset();
           setTimeout(() => { window.location.href = "/login/"; }, 3000);
         }

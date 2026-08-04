@@ -160,7 +160,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
           if (error) throw error;
 
-          showAlert(`✅ Akun staff baru (${name} - ${role === 'admin' ? 'Admin' : 'Pelatih'}) berhasil dibuat!`, "success");
+          showAlert(`Akun staff baru (${name} - ${role === 'admin' ? 'Admin' : 'Pelatih'}) berhasil dibuat!`, "success");
           staffRegisterForm.reset();
           staffFormContainer.style.display = "none";
           mainDefaultState.style.display = "block";
@@ -390,12 +390,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Tampilkan info detail
     detailStudentName.textContent = student.student_name;
-    detailStudentMeta.innerHTML = `Usia: ${student.age} Tahun | Wali: ${student.parent_name || 'Tidak diisi'} | <span style="background:var(--secondary-color); color:white; padding:3px 10px; border-radius:12px; font-weight:700; font-size:0.85rem;">🔑 PIN Wali: ${student.access_pin || '1234'}</span>`;
+    detailStudentMeta.innerHTML = `Usia: ${student.age} Tahun | Wali: ${student.parent_name || 'Tidak diisi'} | <span style="background:var(--secondary-color); color:white; padding:3px 10px; border-radius:12px; font-weight:700; font-size:0.85rem;">PIN Wali: ${student.access_pin || '1234'}</span>`;
     
     if (student.photo_url) {
       detailStudentAvatar.innerHTML = `<img class="student-avatar" src="${student.photo_url}" style="margin-bottom:0;" alt="${student.student_name}">`;
     } else {
-      detailStudentAvatar.innerHTML = `<div class="student-avatar" style="margin-bottom:0;">🏊‍♂️</div>`;
+      detailStudentAvatar.innerHTML = `<div class="student-avatar" style="margin-bottom:0; font-size:1.2rem; font-weight:700;">${student.student_name.charAt(0).toUpperCase()}</div>`;
     }
 
     btnViewRaportFull.href = `/raport/?student_id=${studentId}`;
@@ -483,8 +483,8 @@ document.addEventListener("DOMContentLoaded", async () => {
           </div>
           <p style="font-size:0.93rem; color:#444; font-style:italic; line-height:1.5; background:rgba(0,0,0,0.01); padding:10px; border-radius:5px; border-left: 3px solid var(--accent-color);">"${notesSnippet}"</p>
           <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:12px;">
-            <button class="btn btn-secondary btn-small" onclick="editEvaluation('${item.id}')">✏️ Edit</button>
-            <button class="btn btn-danger btn-small" onclick="deleteEvaluation('${item.id}')">🗑️ Hapus</button>
+            <button class="btn btn-secondary btn-small" onclick="editEvaluation('${item.id}')">Edit</button>
+            <button class="btn btn-danger btn-small" onclick="deleteEvaluation('${item.id}')">Hapus</button>
           </div>
         `;
         evaluationsSmallList.appendChild(card);

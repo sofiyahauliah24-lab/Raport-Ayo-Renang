@@ -83,7 +83,7 @@ document.addEventListener("DOMContentLoaded", async () => {
               e.preventDefault();
               const enteredPin = pinModalInput.value.trim();
               if (enteredPin !== student.access_pin.trim()) {
-                pinModalError.textContent = "❌ Password / PIN Akses salah! Silakan tanyakan ke Pelatih/Admin.";
+                pinModalError.textContent = "Password / PIN Akses salah! Silakan tanyakan ke Pelatih/Admin.";
                 pinModalError.style.display = "block";
                 pinModalInput.focus();
               } else {
@@ -105,10 +105,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     displayStatus.className = student.is_active ? "badge badge-active" : "badge badge-inactive";
     displayStatus.textContent = student.is_active ? "Aktif" : "Tidak Aktif";
 
+    const firstChar = student.student_name ? student.student_name.charAt(0).toUpperCase() : "A";
     if (student.photo_url) {
-      photoContainer.innerHTML = `<img class="student-avatar" src="${student.photo_url}" alt="" onerror="this.outerHTML='<div class=\'student-avatar\'>🏊‍♂️</div>';">`;
+      photoContainer.innerHTML = `<img class="student-avatar" src="${student.photo_url}" alt="" onerror="this.outerHTML='<div class=\'student-avatar\' style=\'font-size:1.4rem; font-weight:700;\'>${firstChar}</div>';">`;
     } else {
-      photoContainer.innerHTML = `<div class="student-avatar">🏊‍♂️</div>`;
+      photoContainer.innerHTML = `<div class="student-avatar" style="font-size:1.4rem; font-weight:700;">${firstChar}</div>`;
     }
 
     headerSpinner.style.display = "none";
@@ -177,8 +178,8 @@ document.addEventListener("DOMContentLoaded", async () => {
           </div>
 
           <div class="timeline-meta" style="margin-bottom: 15px;">
-            <p>📅 Tanggal: <span>${trainingDate}</span></p>
-            <p>👤 Pelatih: <span>${coachName}</span></p>
+            <p>Tanggal: <span>${trainingDate}</span></p>
+            <p>Pelatih: <span>${coachName}</span></p>
           </div>
 
           <div class="eval-detail-box" style="margin-bottom: 15px;">
