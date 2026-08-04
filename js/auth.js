@@ -72,7 +72,7 @@ async function getCurrentProfile() {
 async function requireAuth() {
   const session = await getCurrentSession();
   if (!session) {
-    window.location.href = "../login";
+    window.location.href = "/login/";
     return null;
   }
   return session;
@@ -91,9 +91,9 @@ async function requireRole(allowedRoles) {
 
   if (!allowedRoles.includes(profile.role)) {
     if (profile.role === "admin" || profile.role === "coach") {
-      window.location.href = "../admin";
+      window.location.href = "/admin/";
     } else {
-      window.location.href = "../login";
+      window.location.href = "/login/";
     }
     return null;
   }
@@ -108,7 +108,7 @@ async function logout() {
   } catch (err) {
     console.error("Gagal logout:", err.message);
   } finally {
-    window.location.href = "../login";
+    window.location.href = "/login/";
   }
 }
 
@@ -122,7 +122,7 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
                          path === "/" ||
                          path === "";
     if (!isPublicPage) {
-      window.location.href = "../login";
+      window.location.href = "/login/";
     }
   }
 });

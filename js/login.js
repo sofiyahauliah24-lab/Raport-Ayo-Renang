@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (session) {
     const profile = await getCurrentProfile();
     if (profile) {
-      window.location.href = "../admin";
+      window.location.href = "/admin/";
       return;
     }
   }
@@ -81,9 +81,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       // 4. Arahkan sesuai role
       setTimeout(() => {
         if (profile.role === "admin" || profile.role === "coach") {
-          window.location.href = "../admin";
+          window.location.href = "/admin/";
         } else {
-          window.location.href = "../";
+          window.location.href = "/";
         }
       }, 1000);
 

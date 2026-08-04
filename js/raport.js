@@ -31,10 +31,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (isStaff) {
     btnLogout.style.display = "inline-flex";
     btnLogout.addEventListener("click", async () => { await logout(); });
-    btnBack.href = "../admin";
+    btnBack.href = "/admin/";
   } else {
     btnLogout.style.display = "none";
-    btnBack.href = "../";
+    btnBack.href = "/";
   }
 
   if (!studentId) {

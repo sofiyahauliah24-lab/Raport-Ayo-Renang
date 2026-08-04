@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Jika pengguna sudah login, langsung arahkan ke halaman admin
   const session = await getCurrentSession();
   if (session) {
-    window.location.href = "admin.html";
+    window.location.href = "/admin/";
     return;
   }
 
@@ -103,11 +103,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (data.user) {
         if (data.session) {
           showAlert("✅ Pendaftaran akun staff berhasil! Mengarahkan ke portal...", "success");
-          setTimeout(() => { window.location.href = "admin.html"; }, 1500);
+          setTimeout(() => { window.location.href = "/admin/"; }, 1500);
         } else {
           showAlert("✅ Pendaftaran berhasil! Silakan periksa email Anda untuk verifikasi atau langsung masuk jika verifikasi email dinonaktifkan.", "success");
           form.reset();
-          setTimeout(() => { window.location.href = "login.html"; }, 3000);
+          setTimeout(() => { window.location.href = "/login/"; }, 3000);
         }
       } else {
         throw new Error("Terjadi kesalahan yang tidak diketahui. Silakan coba lagi.");
