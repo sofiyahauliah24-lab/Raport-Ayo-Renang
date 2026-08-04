@@ -43,10 +43,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     const email   = document.getElementById("reg-email").value.trim();
     const pass    = document.getElementById("reg-password").value;
     const passKon = document.getElementById("reg-confirm-password").value;
+    const roleEl  = document.getElementById("reg-role");
+    const role    = roleEl ? roleEl.value : "parent";
 
     hideAlert();
 
-    // --- Validasi lokal (tidak perlu menghubungi Supabase) ---
+    // --- Validasi lokal ---
     if (!nama || !email || !pass || !passKon) {
       showAlert("Harap lengkapi semua isian.", "danger");
       return;
@@ -76,20 +78,19 @@ document.addEventListener("DOMContentLoaded", async () => {
         options: {
           data: {
             full_name: nama,
-            role: "parent"
+            role: role
           }
         }
       });
 
       if (error) {
-        // Pesan error dari Supabase diterjemahkan ke Bahasa Indonesia
         if (error.message.includes("already registered") || error.message.includes("already exists")) {
           throw new Error("Email sudah terdaftar. Silakan masuk menggunakan akun tersebut.");
         }
         if (error.message.toLowerCase().includes("rate limit") || 
             error.message.toLowerCase().includes("too many") ||
             error.status === 429) {
-          throw new Error("Terlalu banyak percobaan. Server sedang membatasi permintaan. Silakan tunggu beberapa menit lalu coba lagi.");
+          throw new Error("⚠️ Terlalu banyak percobaan pendaftaran (Supabase Rate Limit). Matikan fitur 'Confirm Email' di Dashboard Supabase (Authentication -> Providers -> Email) atau tunggu 1 jam sebelum mencoba lagi.");
         }
         if (error.message.includes("Failed to fetch")) {
           throw new Error("Tidak dapat terhubung ke server. Periksa koneksi internet Anda.");
@@ -98,15 +99,20 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       // Deteksi email duplikat saat "Confirm email" dinonaktifkan di Supabase
-      // (Supabase mengembalikan identities kosong jika email sudah ada)
       if (data.user && data.user.identities && data.user.identities.length === 0) {
         throw new Error("Email sudah terdaftar. Silakan masuk menggunakan akun tersebut.");
       }
 
       if (data.user) {
-        showAlert("✅ Pendaftaran berhasil! Akun Anda telah dibuat. Mengarahkan ke halaman masuk...", "success");
-        form.reset();
-        setTimeout(() => { window.location.href = "login.html"; }, 2500);
+        const targetPage = (role === "parent") ? "dashboard.html" : "admin.html";
+        if (data.session) {
+          showAlert("✅ Pendaftaran berhasil! Mengarahkan...", "success");
+          setTimeout(() => { window.location.href = targetPage; }, 1500);
+        } else {
+          showAlert("✅ Pendaftaran berhasil! Silakan periksa email Anda untuk verifikasi atau langsung masuk jika verifikasi email dinonaktifkan.", "success");
+          form.reset();
+          setTimeout(() => { window.location.href = "login.html"; }, 3000);
+        }
       } else {
         throw new Error("Terjadi kesalahan yang tidak diketahui. Silakan coba lagi.");
       }

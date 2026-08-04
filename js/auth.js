@@ -21,7 +21,7 @@ async function getCurrentUser() {
   return session ? session.user : null;
 }
 
-// Ambil profil pengguna dari tabel profiles
+// Ambil profil pengguna dari tabel profiles (dengan fallback jika trigger belum berjalan)
 async function getCurrentProfile() {
   try {
     const user = await getCurrentUser();
@@ -31,13 +31,40 @@ async function getCurrentProfile() {
       .from("profiles")
       .select("*")
       .eq("id", user.id)
-      .single();
+      .maybeSingle();
 
-    if (error) throw error;
-    return data;
+    if (error) {
+      if (error.code === "PGRST205" || (error.message && error.message.includes("Could not find the table"))) {
+        throw new Error("Tabel 'profiles' belum dibuat di database Supabase! Silakan jalankan skrip setup.sql di SQL Editor Supabase.");
+      }
+      console.warn("Peringatan query profiles:", error.message);
+    }
+
+    if (data) return data;
+
+    // Fallback jika profil belum terbuat di database
+    const name = user.user_metadata?.full_name || "Pengguna";
+    const role = user.user_metadata?.role || "parent";
+
+    const { data: newProfile, error: insertError } = await supabaseClient
+      .from("profiles")
+      .upsert({ id: user.id, full_name: name, role: role })
+      .select()
+      .maybeSingle();
+
+    if (insertError) {
+      if (insertError.code === "PGRST205" || (insertError.message && insertError.message.includes("Could not find the table"))) {
+        throw new Error("Tabel 'profiles' belum dibuat di database Supabase! Silakan jalankan skrip setup.sql di SQL Editor Supabase.");
+      }
+      console.warn("Peringatan insert profile:", insertError.message);
+    }
+
+    if (newProfile) return newProfile;
+
+    return { id: user.id, full_name: name, role: role };
   } catch (err) {
     console.error("Gagal mendapatkan profil:", err.message);
-    return null;
+    throw err;
   }
 }
 

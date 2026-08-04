@@ -50,10 +50,13 @@ BEGIN
     new.id,
     coalesce(new.raw_user_meta_data->>'full_name', 'User Baru'),
     coalesce(new.raw_user_meta_data->>'role', 'parent')
-  );
+  )
+  ON CONFLICT (id) DO UPDATE SET
+    full_name = EXCLUDED.full_name,
+    role = EXCLUDED.role;
   RETURN new;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- Pemicu pendaftaran
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
@@ -67,7 +70,7 @@ RETURNS text AS $$
 BEGIN
   RETURN (SELECT role FROM public.profiles WHERE id = auth.uid());
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- 7. AKTIFKAN ROW LEVEL SECURITY (RLS)
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;

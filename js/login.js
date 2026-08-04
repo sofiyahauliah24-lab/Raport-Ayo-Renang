@@ -68,16 +68,16 @@ document.addEventListener("DOMContentLoaded", async () => {
         throw error;
       }
 
-      // 3. Ambil data profil dari database profiles
-      const { data: profile, error: profileError } = await supabaseClient
-        .from("profiles")
-        .select("role")
-        .eq("id", data.user.id)
-        .single();
+      // 3. Ambil data profil pengguna
+      let profile = null;
+      try {
+        profile = await getCurrentProfile();
+      } catch (profileErr) {
+        throw profileErr;
+      }
 
-      if (profileError) {
-        console.error("Gagal mengambil profil user:", profileError.message);
-        throw new Error("Akun berhasil masuk, tetapi profil Anda belum terdaftar di database. Hubungi Administrator.");
+      if (!profile) {
+        throw new Error("Akun berhasil masuk, tetapi profil Anda belum terdaftar di database. Silakan jalankan skrip setup.sql di Supabase SQL Editor.");
       }
 
       showAlert("Login berhasil! Mengarahkan...", "success");

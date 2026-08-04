@@ -220,7 +220,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     e.preventDefault();
     const name = document.getElementById("student-name").value.trim();
     const age = parseInt(document.getElementById("student-age").value);
-    const parentId = studentParentSelect.value;
+    const parentId = studentParentSelect.value.trim();
     const photoUrl = document.getElementById("student-photo").value.trim() || null;
     const isActive = document.getElementById("student-status").value === "true";
 
@@ -234,7 +234,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         .insert({
           student_name: name,
           age: age,
-          parent_id: parentId,
+          parent_id: parentId || null, // Nilai kosong diubah ke null agar tidak error UUID
           photo_url: photoUrl,
           is_active: isActive
         })
@@ -264,9 +264,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   async function selectStudent(studentId) {
     activeStudentId = studentId;
 
-    // Highlight item di sidebar
-    document.querySelectorAll(".student-list-item").forEach(item => item.classList.remove("active"));
-    await loadStudents(); // Memperbarui list
+    // Highlight item di sidebar tanpa fetch ulang server
+    renderStudentsList(students);
 
     // Hide views yang tidak relevan
     mainDefaultState.style.display = "none";
@@ -328,8 +327,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
       }
 
-      // Auto-set next meeting number
-      const maxMeeting = Math.max(...data.map(d => d.training_sessions ? d.training_sessions.meeting_number : 0));
+      // Auto-set next meeting number secara aman
+      const maxMeeting = data.reduce((max, d) => {
+        const num = d.training_sessions ? d.training_sessions.meeting_number : 0;
+        return num > max ? num : max;
+      }, 0);
       evalMeetingNum.value = maxMeeting + 1;
 
       data.forEach(item => {
