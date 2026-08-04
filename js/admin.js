@@ -290,16 +290,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     const name = document.getElementById("student-name").value.trim();
     const age = parseInt(document.getElementById("student-age").value);
     const parentNameInput = document.getElementById("student-parent-name") ? document.getElementById("student-parent-name").value.trim() : "";
+    const accessPinInput = document.getElementById("student-access-pin") ? document.getElementById("student-access-pin").value.trim() : "";
     const photoFileInput = document.getElementById("student-photo-file");
-    const photoUrlInput = document.getElementById("student-photo").value.trim();
     const isActive = document.getElementById("student-status").value === "true";
+
+    // Auto-generate 4 digit PIN jika tidak diisi
+    const accessPin = accessPinInput || Math.floor(1000 + Math.random() * 9000).toString();
 
     const btnSave = document.getElementById("btn-save-student");
     btnSave.disabled = true;
     btnSave.textContent = "Menyimpan...";
 
     try {
-      let photoUrl = photoUrlInput || null;
+      let photoUrl = null;
 
       // Jika ada file foto yang diunggah
       if (photoFileInput && photoFileInput.files && photoFileInput.files.length > 0) {
@@ -342,6 +345,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           student_name: name,
           age: age,
           parent_name: parentNameInput || null,
+          access_pin: accessPin,
           photo_url: photoUrl,
           is_active: isActive
         })
@@ -350,7 +354,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       if (error) throw error;
 
-      showAlert("Data murid berhasil ditambahkan!", "success");
+      showAlert(`Data murid "${name}" berhasil ditambahkan! PIN Akses Wali: ${accessPin}`, "success");
       studentRegisterForm.reset();
       studentFormContainer.style.display = "none";
       btnSave.disabled = false;
@@ -386,7 +390,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Tampilkan info detail
     detailStudentName.textContent = student.student_name;
-    detailStudentMeta.textContent = `Usia: ${student.age} Tahun | Wali/Orang Tua: ${student.parent_name || 'Tidak diisi'}`;
+    detailStudentMeta.innerHTML = `Usia: ${student.age} Tahun | Wali: ${student.parent_name || 'Tidak diisi'} | <span style="background:var(--secondary-color); color:white; padding:3px 10px; border-radius:12px; font-weight:700; font-size:0.85rem;">🔑 PIN Wali: ${student.access_pin || '1234'}</span>`;
     
     if (student.photo_url) {
       detailStudentAvatar.innerHTML = `<img class="student-avatar" src="${student.photo_url}" style="margin-bottom:0;" alt="${student.student_name}">`;

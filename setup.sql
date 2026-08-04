@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS public.students (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   parent_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
   parent_name TEXT,
+  access_pin TEXT,
   student_name TEXT NOT NULL,
   photo_url TEXT,
   birth_date DATE,
@@ -21,8 +22,9 @@ CREATE TABLE IF NOT EXISTS public.students (
   created_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
--- Pastikan kolom parent_name ada jika tabel sudah pernah dibuat sebelumnya
+-- Pastikan kolom parent_name & access_pin ada jika tabel sudah pernah dibuat sebelumnya
 ALTER TABLE public.students ADD COLUMN IF NOT EXISTS parent_name TEXT;
+ALTER TABLE public.students ADD COLUMN IF NOT EXISTS access_pin TEXT;
 
 -- 3. TABEL SESI LATIHAN (Training Sessions)
 CREATE TABLE IF NOT EXISTS public.training_sessions (

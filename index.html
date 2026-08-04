@@ -125,18 +125,35 @@
 
                 const parentText = student.parent_name || "-";
 
-                card.innerHTML = `
-                  <div style="display:flex; align-items:center; gap:15px;">
-                    ${photoHtml}
-                    <div>
-                      <strong style="color:var(--primary-color); font-size:1.1rem;">${student.student_name}</strong>
-                      <div style="font-size:0.85rem; color:#666;">Usia: ${student.age} th ${parentText !== '-' ? '| Wali: ' + parentText : ''}</div>
-                    </div>
+                const infoDiv = document.createElement("div");
+                infoDiv.style.cssText = "display:flex; align-items:center; gap:15px;";
+                infoDiv.innerHTML = `
+                  ${photoHtml}
+                  <div>
+                    <strong style="color:var(--primary-color); font-size:1.1rem;">${student.student_name}</strong>
+                    <div style="font-size:0.85rem; color:#666;">Usia: ${student.age} th ${parentText !== '-' ? '| Wali: ' + parentText : ''}</div>
                   </div>
-                  <a href="raport.html?student_id=${student.id}" class="btn btn-accent btn-small" style="text-decoration:none;">
-                    📋 Lihat Raport
-                  </a>
                 `;
+
+                const btnRaport = document.createElement("button");
+                btnRaport.className = "btn btn-accent btn-small";
+                btnRaport.style.cursor = "pointer";
+                btnRaport.textContent = "📋 Lihat Raport";
+                btnRaport.addEventListener("click", () => {
+                  if (student.access_pin) {
+                    const pin = prompt(`🔑 Masukkan Password/PIN Akses Wali Murid untuk "${student.student_name}":`);
+                    if (pin === null) return; // Batal
+                    if (pin.trim() !== student.access_pin.trim()) {
+                      alert("❌ Password/PIN Akses salah! Silakan tanyakan PIN akses ke Pelatih / Admin.");
+                      return;
+                    }
+                    sessionStorage.setItem(`raport_pin_${student.id}`, pin.trim());
+                  }
+                  window.location.href = `raport.html?student_id=${student.id}`;
+                });
+
+                card.appendChild(infoDiv);
+                card.appendChild(btnRaport);
                 searchResults.appendChild(card);
               });
 

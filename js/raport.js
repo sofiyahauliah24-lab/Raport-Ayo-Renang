@@ -22,9 +22,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     alertBox.textContent = message;
     alertBox.className = `alert alert-${type}`;
     alertBox.style.display = "block";
+  }
+
   // Cek apakah ada pengguna staff yang sedang login
   const session = await getCurrentSession();
-  if (session) {
+  const isStaff = !!session;
+
+  if (isStaff) {
     btnLogout.style.display = "inline-flex";
     btnLogout.addEventListener("click", async () => { await logout(); });
     btnBack.href = "admin.html";
@@ -48,11 +52,31 @@ document.addEventListener("DOMContentLoaded", async () => {
       .eq("id", studentId)
       .single();
 
-    if (studentError) {
+    if (studentError || !student) {
       headerSpinner.style.display = "none";
       timelineSpinner.style.display = "none";
       showAlert("Data peserta tidak ditemukan.", "danger");
       return;
+    }
+
+    // --- VERIFIKASI PIN / PASSWORD AKSES ORANG TUA ---
+    if (!isStaff && student.access_pin) {
+      const savedPin = sessionStorage.getItem(`raport_pin_${studentId}`) || urlParams.get("pin");
+      
+      if (savedPin !== student.access_pin) {
+        headerSpinner.style.display = "none";
+        timelineSpinner.style.display = "none";
+        
+        // Tampilkan modal PIN / Password Akses
+        const userEnteredPin = prompt(`🔒 Akses Terproteksi!\n\nMasukkan Password/PIN Akses untuk melihat Raport "${student.student_name}" (Diberikan oleh Pelatih/Admin):`);
+        
+        if (!userEnteredPin || userEnteredPin.trim() !== student.access_pin.trim()) {
+          showAlert("⛔ Password / PIN Akses salah atau dibatalkan. Silakan minta PIN akses ke Pelatih / Admin.", "danger");
+          return;
+        } else {
+          sessionStorage.setItem(`raport_pin_${studentId}`, userEnteredPin.trim());
+        }
+      }
     }
 
     // Tampilkan data peserta di header
@@ -72,7 +96,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     headerSpinner.style.display = "none";
     profileContent.style.display = "block";
 
-    // 4. Ambil Data Evaluasi & Sesi
+    // Ambil Data Evaluasi & Sesi
     const { data: evals, error: evalsError } = await supabaseClient
       .from("evaluations")
       .select(`
