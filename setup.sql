@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS public.profiles (
 CREATE TABLE IF NOT EXISTS public.students (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   parent_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+  parent_name TEXT,
   student_name TEXT NOT NULL,
   photo_url TEXT,
   birth_date DATE,
@@ -19,6 +20,9 @@ CREATE TABLE IF NOT EXISTS public.students (
   is_active BOOLEAN DEFAULT true NOT NULL,
   created_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now()) NOT NULL
 );
+
+-- Pastikan kolom parent_name ada jika tabel sudah pernah dibuat sebelumnya
+ALTER TABLE public.students ADD COLUMN IF NOT EXISTS parent_name TEXT;
 
 -- 3. TABEL SESI LATIHAN (Training Sessions)
 CREATE TABLE IF NOT EXISTS public.training_sessions (
@@ -95,11 +99,9 @@ CREATE POLICY "Admins have full access on profiles" ON public.profiles
 
 -- Students
 DROP POLICY IF EXISTS "View students based on role" ON public.students;
-CREATE POLICY "View students based on role" ON public.students
-  FOR SELECT USING (
-    parent_id = auth.uid() 
-    OR public.get_my_role() IN ('coach', 'admin')
-  );
+DROP POLICY IF EXISTS "Public and authenticated can view students" ON public.students;
+CREATE POLICY "Public and authenticated can view students" ON public.students
+  FOR SELECT USING (true);
 
 DROP POLICY IF EXISTS "Admin and coach can manage students" ON public.students;
 CREATE POLICY "Admin and coach can manage students" ON public.students
@@ -107,15 +109,9 @@ CREATE POLICY "Admin and coach can manage students" ON public.students
 
 -- Training Sessions
 DROP POLICY IF EXISTS "View training sessions" ON public.training_sessions;
-CREATE POLICY "View training sessions" ON public.training_sessions
-  FOR SELECT USING (
-    public.get_my_role() IN ('coach', 'admin')
-    OR EXISTS (
-      SELECT 1 FROM public.students 
-      WHERE students.id = training_sessions.student_id 
-      AND students.parent_id = auth.uid()
-    )
-  );
+DROP POLICY IF EXISTS "Public and authenticated can view training sessions" ON public.training_sessions;
+CREATE POLICY "Public and authenticated can view training sessions" ON public.training_sessions
+  FOR SELECT USING (true);
 
 DROP POLICY IF EXISTS "Manage training sessions" ON public.training_sessions;
 CREATE POLICY "Manage training sessions" ON public.training_sessions
@@ -123,15 +119,9 @@ CREATE POLICY "Manage training sessions" ON public.training_sessions
 
 -- Evaluations
 DROP POLICY IF EXISTS "View evaluations" ON public.evaluations;
-CREATE POLICY "View evaluations" ON public.evaluations
-  FOR SELECT USING (
-    public.get_my_role() IN ('coach', 'admin')
-    OR EXISTS (
-      SELECT 1 FROM public.students 
-      WHERE students.id = evaluations.student_id 
-      AND students.parent_id = auth.uid()
-    )
-  );
+DROP POLICY IF EXISTS "Public and authenticated can view evaluations" ON public.evaluations;
+CREATE POLICY "Public and authenticated can view evaluations" ON public.evaluations
+  FOR SELECT USING (true);
 
 DROP POLICY IF EXISTS "Manage evaluations" ON public.evaluations;
 CREATE POLICY "Manage evaluations" ON public.evaluations

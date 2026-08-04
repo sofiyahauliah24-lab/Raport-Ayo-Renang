@@ -22,54 +22,43 @@ document.addEventListener("DOMContentLoaded", async () => {
     alertBox.textContent = message;
     alertBox.className = `alert alert-${type}`;
     alertBox.style.display = "block";
+  // Cek apakah ada pengguna staff yang sedang login
+  const session = await getCurrentSession();
+  if (session) {
+    btnLogout.style.display = "inline-flex";
+    btnLogout.addEventListener("click", async () => { await logout(); });
+    btnBack.href = "admin.html";
+  } else {
+    btnLogout.style.display = "none";
+    btnBack.href = "index.html";
   }
 
-  // Handle Logout menggunakan fungsi global dari auth.js
-  btnLogout.addEventListener("click", async () => {
-    await logout();
-  });
-
   if (!studentId) {
-    showAlert("ID Peserta tidak diberikan!", "danger");
+    showAlert("ID Peserta tidak ditemukan!", "danger");
     headerSpinner.style.display = "none";
     timelineSpinner.style.display = "none";
     return;
   }
 
   try {
-    // 1. Proteksi Halaman: Memastikan user yang masuk sudah login (role apa saja diizinkan melihat raport jika punya akses RLS)
-    const userProfile = await requireRole(["parent", "admin", "coach"]);
-    if (!userProfile) return; // Jika tidak sah, requireRole me-redirect otomatis
-
-    // Atur tombol kembali dinamis
-    if (userProfile.role === "parent") {
-      btnBack.href = "dashboard.html";
-    } else {
-      btnBack.href = "admin.html";
-    }
-
-    // 3. Ambil Detail Peserta (Students)
+    // Ambil Detail Peserta (Students)
     const { data: student, error: studentError } = await supabaseClient
       .from("students")
-      .select(`
-        *,
-        parent:profiles(full_name)
-      `)
+      .select("*")
       .eq("id", studentId)
       .single();
 
     if (studentError) {
-      // Jika terjadi error (misalnya tidak punya akses karena RLS)
       headerSpinner.style.display = "none";
       timelineSpinner.style.display = "none";
-      showAlert("Peserta tidak ditemukan atau Anda tidak memiliki akses untuk melihat riwayat ini.", "danger");
+      showAlert("Data peserta tidak ditemukan.", "danger");
       return;
     }
 
     // Tampilkan data peserta di header
     displayName.textContent = student.student_name;
     displayAge.textContent = `Usia: ${student.age} Tahun`;
-    displayParent.textContent = `Wali: ${student.parent ? student.parent.full_name : 'Tidak terhubung'}`;
+    displayParent.textContent = `Wali: ${student.parent_name || 'Terdaftar'}`;
     
     displayStatus.className = student.is_active ? "badge badge-active" : "badge badge-inactive";
     displayStatus.textContent = student.is_active ? "Aktif" : "Tidak Aktif";

@@ -15,31 +15,45 @@
         <p>Sistem Catatan Perkembangan & Evaluasi Peserta</p>
       </div>
       
-      <h1>Catat & Pantau Perkembangan Renang Anak Anda dengan <span>Mudah</span></h1>
-      <p class="subtitle">Sebuah platform digital bagi Pelatih untuk memberikan evaluasi mendetail dan bagi Orang Tua untuk memantau kemajuan berenang sang anak secara real-time.</p>
-      
-      <div id="auth-status-section">
-        <div class="spinner" id="loading-spinner"></div>
-        <div id="cta-buttons" style="display: none;">
-          <a href="login.html" class="btn btn-accent btn-primary" style="font-size: 1.1rem; padding: 15px 40px; border-radius: 50px;">Masuk ke Aplikasi</a>
+      <!-- PENCARIAN PUSAT UNTUK ORANG TUA / WALI -->
+      <div class="card" style="max-width: 650px; margin: 0 auto 40px auto; padding: 30px; text-align: left;">
+        <h2 style="color: var(--primary-color); font-weight: 800; font-size: 1.5rem; margin-bottom: 8px; text-align: center;">
+          🔍 Cari Catatan Perkembangan Anak
+        </h2>
+        <p style="color: #666; font-size: 0.95rem; text-align: center; margin-bottom: 20px;">
+          Ketik nama anak/peserta les untuk melihat Raport Hasil Evaluasi Latihan Berenang.
+        </p>
+
+        <div class="search-box" style="margin-bottom: 15px;">
+          <input type="text" id="parent-search-input" placeholder="Masukkan nama peserta les (cth: Budi)..." style="font-size: 1.1rem; padding: 14px 20px; border-radius: 30px; border: 2px solid var(--secondary-color);">
         </div>
+
+        <div id="search-spinner" class="spinner" style="display: none;"></div>
+        <div id="parent-search-results" style="display: flex; flex-direction: column; gap: 10px;"></div>
       </div>
 
-      <div class="landing-features">
+      <div id="auth-status-section" style="margin-top: 30px;">
+        <p style="color: #666; font-size: 0.9rem; margin-bottom: 10px;">Pengelola Kursus & Pelatih:</p>
+        <a href="login.html" class="btn btn-primary" style="font-size: 0.95rem; padding: 10px 25px;">
+          🔑 Portal Pelatih & Administrator
+        </a>
+      </div>
+
+      <div class="landing-features" style="margin-top: 50px;">
         <div class="feature-box">
           <div class="feature-icon">🏊‍♂️</div>
-          <h3>Profil Peserta</h3>
-          <p>Simpan data nama, usia, status aktif, serta foto peserta dengan rapi dan aman.</p>
+          <h3>Pencarian Cepat</h3>
+          <p>Orang Tua dapat mencari nama anak tanpa harus melakukan pendaftaran akun rumit.</p>
         </div>
         <div class="feature-box">
           <div class="feature-icon">📝</div>
-          <h3>Evaluasi Sesi Latihan</h3>
-          <p>Pelatih dapat menginput materi latihan, hasil evaluasi, dan catatan perkembangan tanpa batasan karakter.</p>
+          <h3>Evaluasi Pelatih</h3>
+          <p>Pelatih mengisi materi latihan, hasil evaluasi, dan catatan perkembangan secara rutin.</p>
         </div>
         <div class="feature-box">
-          <div class="feature-icon">🔒</div>
-          <h3>Akses Aman (RLS)</h3>
-          <p>Orang tua hanya dapat melihat perkembangan anak mereka sendiri. Kerahasiaan data terjamin penuh.</p>
+          <div class="feature-icon">🛡️</div>
+          <h3>Akses Admin & Pelatih</h3>
+          <p>Administrator mengelola data peserta, sedangkan Pelatih fokus pada evaluasi latihan.</p>
         </div>
       </div>
     </div>
@@ -53,51 +67,74 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabaseClient.js"></script>
   <script>
-    // Logic untuk mendeteksi sesi aktif dan me-redirect user
-    document.addEventListener("DOMContentLoaded", async () => {
-      const spinner = document.getElementById("loading-spinner");
-      const ctaButtons = document.getElementById("cta-buttons");
+    document.addEventListener("DOMContentLoaded", () => {
+      const searchInput = document.getElementById("parent-search-input");
+      const searchSpinner = document.getElementById("search-spinner");
+      const searchResults = document.getElementById("parent-search-results");
+      let searchTimeout = null;
 
-      try {
-        const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
-        
-        if (sessionError) throw sessionError;
+      if (searchInput) {
+        searchInput.addEventListener("input", (e) => {
+          const query = e.target.value.trim();
+          if (searchTimeout) clearTimeout(searchTimeout);
 
-        if (session) {
-          // User sudah login, ambil profile role
-          const { data: profile, error: profileError } = await supabaseClient
-            .from("profiles")
-            .select("role")
-            .eq("id", session.user.id)
-            .single();
-
-          if (profileError) {
-            console.error("Gagal mengambil profil:", profileError.message);
-            // Tetap tampilkan tombol login jika gagal memuat profil
-            spinner.style.display = "none";
-            ctaButtons.style.display = "block";
+          if (query.length < 2) {
+            searchResults.innerHTML = "";
+            searchSpinner.style.display = "none";
             return;
           }
 
-          // Arahkan ke dashboard yang sesuai
-          if (profile.role === "parent") {
-            window.location.href = "dashboard.html";
-          } else if (profile.role === "admin" || profile.role === "coach") {
-            window.location.href = "admin.html";
-          } else {
-            console.error("Role tidak dikenali:", profile.role);
-            spinner.style.display = "none";
-            ctaButtons.style.display = "block";
-          }
-        } else {
-          // User belum login
-          spinner.style.display = "none";
-          ctaButtons.style.display = "block";
-        }
-      } catch (err) {
-        console.error("Error checking auth status:", err.message);
-        spinner.style.display = "none";
-        ctaButtons.style.display = "block";
+          searchSpinner.style.display = "block";
+          searchTimeout = setTimeout(async () => {
+            try {
+              const { data: students, error } = await supabaseClient
+                .from("students")
+                .select("*")
+                .ilike("student_name", `%${query}%`)
+                .order("student_name")
+                .limit(10);
+
+              if (error) throw error;
+
+              searchSpinner.style.display = "none";
+              searchResults.innerHTML = "";
+
+              if (!students || students.length === 0) {
+                searchResults.innerHTML = `<div style="text-align:center; padding:15px; color:#888; background:rgba(0,0,0,0.02); border-radius:10px;">Nama peserta "${query}" tidak ditemukan. Pastikan ejaan nama sudah benar.</div>`;
+                return;
+              }
+
+              students.forEach(student => {
+                const card = document.createElement("div");
+                card.style.cssText = "display:flex; justify-content:space-between; align-items:center; background:white; padding:15px 20px; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,0.05); border:1px solid #e2e8f0; flex-wrap:wrap; gap:10px;";
+                
+                const photoHtml = student.photo_url 
+                  ? `<img src="${student.photo_url}" style="width:45px; height:45px; border-radius:50%; object-fit:cover;">`
+                  : `<div style="width:45px; height:45px; border-radius:50%; background:#e2e8f0; display:flex; align-items:center; justify-content:center; font-size:1.4rem;">🏊‍♂️</div>`;
+
+                const parentText = student.parent_name || "-";
+
+                card.innerHTML = `
+                  <div style="display:flex; align-items:center; gap:15px;">
+                    ${photoHtml}
+                    <div>
+                      <strong style="color:var(--primary-color); font-size:1.1rem;">${student.student_name}</strong>
+                      <div style="font-size:0.85rem; color:#666;">Usia: ${student.age} th ${parentText !== '-' ? '| Wali: ' + parentText : ''}</div>
+                    </div>
+                  </div>
+                  <a href="raport.html?student_id=${student.id}" class="btn btn-accent btn-small" style="text-decoration:none;">
+                    📋 Lihat Raport
+                  </a>
+                `;
+                searchResults.appendChild(card);
+              });
+
+            } catch (err) {
+              searchSpinner.style.display = "none";
+              searchResults.innerHTML = `<div style="color:var(--danger-color); text-align:center; padding:10px;">Gagal mencari: ${err.message}</div>`;
+            }
+          }, 300);
+        });
       }
     });
   </script>

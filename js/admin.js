@@ -87,52 +87,38 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     currentUserId = profile.id;
     currentUserName = profile.full_name;
+    const currentUserRole = profile.role;
+
     adminNameElement.textContent = currentUserName;
-    adminRoleLabel.textContent = profile.role === "admin" ? "Administrator" : "Pelatih (Coach)";
+    adminRoleLabel.textContent = currentUserRole === "admin" ? "Administrator" : "Pelatih (Coach)";
     evalCoachDisplay.value = currentUserName;
 
-    // Load initial data
-    await loadParents();
+    // --- PEMBEDAAN HAK AKSES ROLE (Pelatih vs Admin) ---
+    if (currentUserRole === "coach") {
+      // Pelatih fokus pada evaluasi latihan
+      if (btnToggleAddStudent) btnToggleAddStudent.style.display = "none";
+      if (btnDeleteStudent) btnDeleteStudent.style.display = "none";
+    } else {
+      // Administrator memiliki akses penuh kelola data murid
+      if (btnToggleAddStudent) btnToggleAddStudent.style.display = "block";
+      if (btnDeleteStudent) btnDeleteStudent.style.display = "inline-flex";
+    }
+
+    // Load initial data murid
     await loadStudents();
 
   } catch (err) {
     showAlert("Gagal memuat sesi: " + err.message, "danger");
   }
 
-  // 1. Ambil list Parent untuk Dropdown Formulir Student
-  async function loadParents() {
-    try {
-      const { data, error } = await supabaseClient
-        .from("profiles")
-        .select("id, full_name")
-        .eq("role", "parent")
-        .order("full_name");
-
-      if (error) throw error;
-
-      studentParentSelect.innerHTML = `<option value="">-- Hubungkan ke Wali/Orang Tua --</option>`;
-      data.forEach(parent => {
-        const option = document.createElement("option");
-        option.value = parent.id;
-        option.textContent = parent.full_name;
-        studentParentSelect.appendChild(option);
-      });
-    } catch (err) {
-      console.error("Gagal mengambil data orang tua:", err.message);
-    }
-  }
-
-  // 2. Ambil list Students
+  // 1. Ambil list Students
   async function loadStudents() {
     studentsLoading.style.display = "block";
     studentListContainer.style.display = "none";
     try {
       const { data, error } = await supabaseClient
         .from("students")
-        .select(`
-          *,
-          parent:profiles(id, full_name)
-        `)
+        .select("*")
         .order("student_name");
 
       if (error) throw error;
@@ -174,7 +160,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       item.innerHTML = `
         <div>
           <div class="student-list-name">${student.student_name}</div>
-          <div class="student-list-age">Usia: ${student.age} th | Wali: ${student.parent ? student.parent.full_name : '-'}</div>
+          <div class="student-list-age">Usia: ${student.age} th | Wali: ${student.parent_name || '-'}</div>
         </div>
         ${statusDot}
       `;
@@ -194,26 +180,29 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   // Switch to Form Register Student
-  btnToggleAddStudent.addEventListener("click", () => {
-    studentFormContainer.style.display = "block";
-    mainDefaultState.style.display = "none";
-    studentDetailContainer.style.display = "none";
-    studentRegisterForm.reset();
-    
-    // Clear active selection visual
-    document.querySelectorAll(".student-list-item").forEach(item => item.classList.remove("active"));
-  });
+  if (btnToggleAddStudent) {
+    btnToggleAddStudent.addEventListener("click", () => {
+      studentFormContainer.style.display = "block";
+      mainDefaultState.style.display = "none";
+      studentDetailContainer.style.display = "none";
+      studentRegisterForm.reset();
+      
+      // Clear active selection visual
+      document.querySelectorAll(".student-list-item").forEach(item => item.classList.remove("active"));
+    });
+  }
 
-  btnCancelStudent.addEventListener("click", () => {
-    studentFormContainer.style.display = "none";
-    if (activeStudentId) {
-      studentDetailContainer.style.display = "block";
-      // Highlight the selected item again
-      loadStudents();
-    } else {
-      mainDefaultState.style.display = "block";
-    }
-  });
+  if (btnCancelStudent) {
+    btnCancelStudent.addEventListener("click", () => {
+      studentFormContainer.style.display = "none";
+      if (activeStudentId) {
+        studentDetailContainer.style.display = "block";
+        loadStudents();
+      } else {
+        mainDefaultState.style.display = "block";
+      }
+    });
+  }
 
   // Helper membaca file sebagai Data URL
   function readFileAsDataURL(file) {
@@ -230,7 +219,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     e.preventDefault();
     const name = document.getElementById("student-name").value.trim();
     const age = parseInt(document.getElementById("student-age").value);
-    const parentId = studentParentSelect.value.trim();
+    const parentNameInput = document.getElementById("student-parent-name") ? document.getElementById("student-parent-name").value.trim() : "";
     const photoFileInput = document.getElementById("student-photo-file");
     const photoUrlInput = document.getElementById("student-photo").value.trim();
     const isActive = document.getElementById("student-status").value === "true";
@@ -282,7 +271,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         .insert({
           student_name: name,
           age: age,
-          parent_id: parentId || null, // Nilai kosong diubah ke null agar tidak error UUID
+          parent_name: parentNameInput || null,
           photo_url: photoUrl,
           is_active: isActive
         })
@@ -327,7 +316,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Tampilkan info detail
     detailStudentName.textContent = student.student_name;
-    detailStudentMeta.textContent = `Usia: ${student.age} Tahun | Wali/Orang Tua: ${student.parent ? student.parent.full_name : 'Tidak terhubung'}`;
+    detailStudentMeta.textContent = `Usia: ${student.age} Tahun | Wali/Orang Tua: ${student.parent_name || 'Tidak diisi'}`;
     
     if (student.photo_url) {
       detailStudentAvatar.innerHTML = `<img class="student-avatar" src="${student.photo_url}" style="margin-bottom:0;" alt="${student.student_name}">`;
